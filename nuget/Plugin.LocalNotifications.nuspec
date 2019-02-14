@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
     <metadata minClientVersion="2.8.1">
-        <id>Xam.Plugins.Notifier</id>
+        <id>Smokeball.Plugins.Notifier</id>
         <title>Local Notifications Plugin for Xamarin and Windows</title>
         <version>$version$</version>
-        <authors>edsnider, James Montemagno</authors>
-        <owners>edsnider, James Montemagno</owners>
-        <licenseUrl>https://github.com/edsnider/LocalNotificationsPlugin/blob/master/LICENSE</licenseUrl>
-        <projectUrl>https://github.com/edsnider/LocalNotificationsPlugin</projectUrl>
-        <iconUrl>https://raw.githubusercontent.com/edsnider/LocalNotificationsPlugin/master/art/Xam.Plugins.Notifier.icon.png</iconUrl>
+        <authors>edsnider, James Montemagno, smokeball</authors>
+        <owners>edsnider, James Montemagno, smokeball</owners>
+        <licenseUrl>https://github.com/smokeballdev/localnotificationsplugin/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/smokeballdev/localnotificationsplugin</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/smokeballdev/LocalNotificationsPlugin/master/art/Xam.Plugins.Notifier.icon.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>The local notification plugin provides a simple, cross-platform way to show local notifications from within Xamarin and UWP apps.</description>
         <summary>Cross platform plugin to show local notifications.</summary>
         <tags>ios, android, macos, windows, xamarin.ios, xamarin.android, xamarin.mac, uwp, notifications, toast, alert, iphone, ipad, xamarin, xam.plugin, plugin</tags>
-        <releaseNotes>https://github.com/edsnider/LocalNotificationsPlugin/blob/master/CHANGELOG.md</releaseNotes>
+        <releaseNotes>https://github.com/smokeballdev/LocalNotificationsPlugin/blob/master/CHANGELOG.md</releaseNotes>
         <dependencies>
             <group targetFramework="MonoAndroid10">
                 <dependency id="Xamarin.Android.Support.v4" version="23.0.1.3"/>
