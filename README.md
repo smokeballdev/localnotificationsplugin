@@ -1,7 +1,6 @@
 ## Local Notifications Plugin for Xamarin and Windows
 
-[![NuGet](https://img.shields.io/nuget/v/Xam.Plugins.Notifier.svg?label=NuGet)](https://www.nuget.org/packages/Xam.Plugins.Notifier/)
-[![Build status](https://ci.appveyor.com/api/projects/status/nsatqmgkahom3hpr?svg=true)](https://ci.appveyor.com/project/edsnider/localnotificationsplugin)
+[![Build status](https://ci.appveyor.com/api/projects/status/1sxj9hw8oyyf7q6r?svg=true)](https://ci.appveyor.com/project/dlbroadfoot/localnotificationsplugin)
 
 A consistent and easy way to show local notifications in Xamarin and Windows apps.
 
