@@ -53,14 +53,16 @@ artifacts:
 
 deploy:
   - provider: NuGet
+    server: http://packages.smokeball.com/nuget/smokeball/
     api_key:
-      secure: iZpf1YSkDiacJ9rKDwnS0DucuVDkzuEUhleT9T+ypZO7hhkToq+bmJCzuNyA9rkE
+      secure: Gb5neQyAROVe6WHeeLpjwGG0VPyVX8Oy/3eUUQBLpQA=
     on:
       branch: master
       is_pr: false
 
   - provider: NuGet
+    server: http://packages.smokeball.com/nuget/smokeball/
     api_key:
-      secure: iZpf1YSkDiacJ9rKDwnS0DucuVDkzuEUhleT9T+ypZO7hhkToq+bmJCzuNyA9rkE
+      secure: http://packages.smokeball.com/nuget/smokeball/
     on:
       appveyor_repo_tag: true
