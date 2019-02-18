@@ -14,6 +14,16 @@ namespace Plugin.LocalNotifications
     {
         private const string NotificationKey = "LocalNotificationKey";
 
+        public void RegisterAction(int iconId, string categoryId, string actionId, string displayName, Action<string> action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILocalNotificationBuilder New(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Show a local notification
         /// </summary>
@@ -86,7 +96,7 @@ namespace Plugin.LocalNotifications
         }
 
         // Show local notifications using the UNUserNotificationCenter using a notification trigger (iOS 10+ only)
-        void ShowUserNotification(string title, string body, int id, UNNotificationTrigger trigger)
+        private void ShowUserNotification(string title, string body, int id, UNNotificationTrigger trigger)
         {
             if (!UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
@@ -104,7 +114,7 @@ namespace Plugin.LocalNotifications
             UNUserNotificationCenter.Current.AddNotificationRequest(request, (error) => { });
         }
 
-        NSDateComponents GetNSDateComponentsFromDateTime(DateTime dateTime)
+        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime dateTime)
         {
             return new NSDateComponents
             {

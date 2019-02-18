@@ -10,13 +10,23 @@ namespace Plugin.LocalNotifications
 	/// </summary>
 	public class LocalNotificationsImplementation : ILocalNotifications
 	{
-		/// <summary>
-		/// Show a local notification
-		/// </summary>
-		/// <param name="title">Title of the notification</param>
-		/// <param name="body">Body or description of the notification</param>
-		/// <param name="id">Id of the notification</param>
-		public void Show(string title, string body, int id = 0)
+	    public void RegisterAction(int iconId, string categoryId, string id, string displayName, Action<string> action)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public ILocalNotificationBuilder New(string id)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+        /// <summary>
+        /// Show a local notification
+        /// </summary>
+        /// <param name="title">Title of the notification</param>
+        /// <param name="body">Body or description of the notification</param>
+        /// <param name="id">Id of the notification</param>
+        public void Show(string title, string body, int id = 0)
 		{
 			Show(title, body, id, DateTime.Now);
 		}
@@ -41,7 +51,7 @@ namespace Plugin.LocalNotifications
 			NSUserNotificationCenter.DefaultUserNotificationCenter.ScheduleNotification(notification);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Cancel a local notification
 		/// </summary>
 		/// <param name="id">Id of the notification to cancel</param>
