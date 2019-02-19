@@ -46,8 +46,8 @@ CrossLocalNotifications.Current
 ```csharp
 CrossLocalNotifications.Current
   .RegisterActionSet("ReminderActions")
-    .WithActionHandler("DismissNotificationId", "Dismiss", iconId, OnDismiss)
-    .WithActionHandler("DismissNotificationId", "Snooze", iconId, OnSnooze)
+    .WithActionHandler("Dismiss", iconId, OnDismiss)
+    .WithActionHandler("Snooze", iconId, OnSnooze)
     .Register();
 
 CrossLocalNotifications.Current
