@@ -14,8 +14,6 @@ A consistent and easy way to show local notifications in Xamarin and Windows app
 | ------------------- | :------------------: |
 |Xamarin.iOS|7.0+|
 |Xamarin.Android|3.0+ (API 11+)|
-|Xamarin.Mac|10.7+|
-|Windows (UWP)|10.0+|
 
 
 ### API Usage
@@ -25,13 +23,39 @@ Call `CrossLocalNotifications.Current` from any project or PCL to gain access to
 #### Display a local notification immediately
 
 ```csharp
-CrossLocalNotifications.Current.Show("title", "body");
+CrossLocalNotifications.Current
+  .New(1)
+  .WithTitle("title")
+  .WithBody("body")
+  .Show();
 ```
 
 #### Display a local notification at a scheduled date/time
 
 ```csharp
-CrossLocalNotifications.Current.Show("title", "body", 101, DateTime.Now.AddSeconds(5));
+CrossLocalNotifications.Current
+  .New(1)
+  .WithTitle("title")
+  .WithBody("body")
+  .Show(DateTime.Now.AddSeconds(5));
+```
+
+
+#### Display a local notification with action(s)
+
+```csharp
+CrossLocalNotifications.Current
+  .RegisterActionSet("ReminderActions")
+    .WithActionHandler("DismissNotificationId", "Dismiss", iconId, OnDismiss)
+    .WithActionHandler("DismissNotificationId", "Snooze", iconId, OnSnooze)
+    .Register();
+
+CrossLocalNotifications.Current
+  .New(1)
+  .WithTitle("title")
+  .WithBody("body")
+  .WithActionSet("Reminder)
+  .Show(DateTime.Now.AddSeconds(5));
 ```
 
 #### Cancel a local notification
