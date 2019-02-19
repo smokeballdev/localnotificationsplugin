@@ -57,8 +57,8 @@ namespace Plugin.LocalNotifications
             {
                 _actions.Add(new LocalNotificationAction
                 {
-                    Id = action.Id,
-                    DisplayName = action.DisplayName,
+                    ActionSetId = actionSetId,
+                    Title = action.Title,
                     Parameter = parameter
                 });
             }
@@ -149,14 +149,15 @@ namespace Plugin.LocalNotifications
             {
                 var actionIntent = new Intent();
                 actionIntent.SetAction(LocalNotificationActionReceiver.LocalNotificationIntentAction);
-                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionId, action.Id);
+                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionSetId, action.ActionSetId);
+                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionId, action.Title);
                 actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionParameter, action.Parameter);
 
                 var actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, GetRandomId(), actionIntent, PendingIntentFlags.CancelCurrent);
 
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
-                yield return new Notification.Action(iconId, action.DisplayName, actionPendingIntent);
+                yield return new Notification.Action(iconId, action.Title, actionPendingIntent);
             }
         }
 

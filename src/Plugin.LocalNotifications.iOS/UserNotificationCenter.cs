@@ -29,7 +29,7 @@ namespace Plugin.LocalNotifications
             var categoryId = response.Notification.Request.Content.CategoryIdentifier;
             var actionSet = _actionRegistrars.FirstOrDefault(r => r.Id == categoryId);
 
-            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Id == response.ActionIdentifier);
+            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Title == response.ActionIdentifier);
 
             if (action != null)
             {

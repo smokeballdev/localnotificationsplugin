@@ -33,7 +33,7 @@ namespace Plugin.LocalNotifications
         {
             var actionSetId = intent.HasExtra(LocalNotificationActionSetId) ? intent.GetStringExtra(LocalNotificationActionSetId) : null;
             var actionId = intent.HasExtra(LocalNotificationActionId) ? intent.GetStringExtra(LocalNotificationActionId) : null;
-            var action = GetRegisteredActions(actionSetId).FirstOrDefault(a => a.Id == actionId);
+            var action = GetRegisteredActions(actionSetId).FirstOrDefault(a => a.Title == actionId);
 
             if (action != null)
             {

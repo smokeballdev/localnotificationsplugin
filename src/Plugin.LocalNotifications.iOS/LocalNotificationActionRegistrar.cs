@@ -14,13 +14,17 @@ namespace Plugin.LocalNotifications
             Id = categoryId;
         }
 
-        public ILocalNotificationActionRegistrar WithActionHandler(string actionId, string displayName, int iconId, Action<string> action)
+        public ILocalNotificationActionRegistrar WithActionHandler(string title, int iconId, Action<string> action)
         {
+            if (RegisteredActions.Any(a => a.Title == title))
+            {
+                throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
+            }
+
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
-                Id = actionId,
                 ActionSetId = Id,
-                DisplayName = displayName,
+                Title = title,
                 Action = action,
             });
 
@@ -31,7 +35,7 @@ namespace Plugin.LocalNotifications
         {
             var category = UNNotificationCategory.FromIdentifier(
                 Id,
-                RegisteredActions.Select(action => UNNotificationAction.FromIdentifier(action.Id, action.DisplayName, UNNotificationActionOptions.Foreground)).ToArray(),
+                RegisteredActions.Select(action => UNNotificationAction.FromIdentifier(action.Title, action.Title, UNNotificationActionOptions.Foreground)).ToArray(),
                 new string[] { },
                 UNNotificationCategoryOptions.CustomDismissAction);
 

@@ -7,12 +7,11 @@ namespace Plugin.LocalNotifications.Abstractions
         /// <summary>
         /// Register an action to be used with notifications
         /// </summary>
-        /// <param name="actionId">Unique identifier for the action</param>
-        /// <param name="displayName">Display name for the action</param>
+        /// <param name="title">Unique display name for the action</param>
         /// <param name="iconId">Icon identifier for display purposes</param>
         /// <param name="action">Action to be performed when action is selected, parameter is specified when action is applied to a notification</param>
         /// <returns></returns>
-        ILocalNotificationActionRegistrar WithActionHandler(string actionId, string displayName, int iconId, Action<string> action);
+        ILocalNotificationActionRegistrar WithActionHandler(string title, int iconId, Action<string> action);
 
         /// <summary>
         /// Finish registration
@@ -28,9 +27,8 @@ namespace Plugin.LocalNotifications.Abstractions
     public class LocalNotificationActionRegistration
     {
         public string ActionSetId { get; set; }
-        public string Id { get; set; }
+        public string Title { get; set; }
         public int IconId { get; set; }
-        public string DisplayName { get; set; }
         public Action<string> Action { get; set; }
     }
 }

@@ -16,8 +16,9 @@ namespace Plugin.LocalNotifications
     internal class LocalNotificationAction
     {
         public string Id { get; set; }
+        public string ActionSetId { get; set; }
         public int IconId { get; set; }
-        public string DisplayName { get; set; }
+        public string Title { get; set; }
         public string Parameter { get; set; }
     }
 }

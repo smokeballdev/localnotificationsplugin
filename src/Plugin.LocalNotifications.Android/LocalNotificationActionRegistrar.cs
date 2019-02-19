@@ -12,14 +12,18 @@ namespace Plugin.LocalNotifications
             Id = id;
         }
 
-        public ILocalNotificationActionRegistrar WithActionHandler(string actionId, string displayName, int iconId, Action<string> action)
+        public ILocalNotificationActionRegistrar WithActionHandler(string title, int iconId, Action<string> action)
         {
+            if (RegisteredActions.Any(a => a.Title == title))
+            {
+                throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
+            }
+
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
                 ActionSetId = Id,
-                Id = actionId,
+                Title = title,
                 IconId = iconId,
-                DisplayName = displayName,
                 Action = action
             });
 
