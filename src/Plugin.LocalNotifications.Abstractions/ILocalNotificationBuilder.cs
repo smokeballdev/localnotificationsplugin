@@ -30,7 +30,7 @@ namespace Plugin.LocalNotifications.Abstractions
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        ILocalNotificationBuilder WithAction(string actionId, string parameter);
+        ILocalNotificationBuilder WithActionSet(string id, string parameter);
 
         /// <summary>
         /// Show local notification at the specified time

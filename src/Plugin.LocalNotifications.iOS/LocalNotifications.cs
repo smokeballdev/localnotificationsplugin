@@ -1,5 +1,4 @@
-﻿using System;
-using Plugin.LocalNotifications.Abstractions;
+﻿using Plugin.LocalNotifications.Abstractions;
 using System.Linq;
 using Foundation;
 using UIKit;
@@ -12,64 +11,20 @@ namespace Plugin.LocalNotifications
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
-        private const string NotificationKey = "LocalNotificationKey";
+        public const string NotificationKey = "LocalNotificationKey";
 
-        public void RegisterActionHandler(string categoryId, string actionId, string displayName, int iconId, Action<string> action)
+        private readonly UserNotificationCenter _userNotificationCenter; 
+
+        public LocalNotifications()
         {
-            throw new NotImplementedException();
+            _userNotificationCenter = new UserNotificationCenter();
+
+            UNUserNotificationCenter.Current.Delegate = _userNotificationCenter;
         }
 
-        public ILocalNotificationBuilder New(int id)
-        {
-            throw new NotImplementedException();
-        }
+        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => _userNotificationCenter.NewActionRegistrar(id);
 
-        /// <summary>
-        /// Show a local notification
-        /// </summary>
-        /// <param name="title">Title of the notification</param>
-        /// <param name="body">Body or description of the notification</param>
-        /// <param name="id">Id of the notification</param>
-        public void Show(string title, string body, int id = 0)
-        {
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(.1, false);
-                ShowUserNotification(title, body, id, trigger);
-            }
-            else
-            {
-                Show(title, body, id, DateTime.Now);
-            }
-        }
-
-        /// <summary>
-        /// Show a local notification at a specified time
-        /// </summary>
-        /// <param name="title">Title of the notification</param>
-        /// <param name="body">Body or description of the notification</param>
-        /// <param name="id">Id of the notification</param>
-        /// <param name="notifyTime">Time to show notification</param>
-        public void Show(string title, string body, int id, DateTime notifyTime)
-        {
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                var trigger = UNCalendarNotificationTrigger.CreateTrigger(GetNSDateComponentsFromDateTime(notifyTime), false);
-                ShowUserNotification(title, body, id, trigger);
-            }
-            else
-            {
-                var notification = new UILocalNotification
-                {
-                    FireDate = (NSDate)notifyTime,
-                    AlertTitle = title,
-                    AlertBody = body,
-                    UserInfo = NSDictionary.FromObjectAndKey(NSObject.FromObject(id), NSObject.FromObject(NotificationKey))
-                };
-
-                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-            }
-        }
+        public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(id);
 
         /// <summary>
         /// Cancel a local notification
@@ -79,8 +34,8 @@ namespace Plugin.LocalNotifications
         {
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
-                UNUserNotificationCenter.Current.RemovePendingNotificationRequests(new string[] { id.ToString() });
-                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new string[] { id.ToString() });
+                UNUserNotificationCenter.Current.RemovePendingNotificationRequests(new [] { id.ToString() });
+                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new [] { id.ToString() });
             }
             else
             {
@@ -93,38 +48,6 @@ namespace Plugin.LocalNotifications
                     UIApplication.SharedApplication.CancelLocalNotification(notification);
                 }
             }
-        }
-
-        // Show local notifications using the UNUserNotificationCenter using a notification trigger (iOS 10+ only)
-        private void ShowUserNotification(string title, string body, int id, UNNotificationTrigger trigger)
-        {
-            if (!UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                return;
-            }
-
-            var content = new UNMutableNotificationContent()
-            {
-                Title = title,
-                Body = body
-            };
-            
-            var request = UNNotificationRequest.FromIdentifier(id.ToString(), content, trigger);
-
-            UNUserNotificationCenter.Current.AddNotificationRequest(request, (error) => { });
-        }
-
-        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime dateTime)
-        {
-            return new NSDateComponents
-            {
-                Month = dateTime.Month,
-                Day = dateTime.Day,
-                Year = dateTime.Year,
-                Hour = dateTime.Hour,
-                Minute = dateTime.Minute,
-                Second = dateTime.Second
-            };
         }
     }
 }

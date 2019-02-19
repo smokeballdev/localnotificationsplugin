@@ -53,11 +53,11 @@
       <Link>CrossLocalNotifications.cs</Link>
     </Compile>
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="LocalNotificationActionRegistrar.cs" />
     <Compile Include="Models\LocalNotification.cs" />
     <Compile Include="LocalNotificationActionReceiver.cs" />
     <Compile Include="LocalNotificationBuilder.cs" />
     <Compile Include="LocalNotifications.cs" />
-    <Compile Include="Models\LocalNotificationActionRegistration.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScheduledAlarmHandler.cs" />

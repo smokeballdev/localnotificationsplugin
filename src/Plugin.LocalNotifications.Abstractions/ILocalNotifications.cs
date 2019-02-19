@@ -8,14 +8,10 @@ namespace Plugin.LocalNotifications.Abstractions
     public interface ILocalNotifications
     {
         /// <summary>
-        /// Register an action for use with notifications
+        /// Register a group of action(s) for use with notifications
         /// </summary>
-        /// <param name="categoryId">Category identifier used for grouping actions</param>
-        /// <param name="actionId">Unique identifier for the action</param>
-        /// <param name="displayName">Display name for the action</param>
-        /// <param name="iconId">Icon identifier for display purposes</param>
-        /// <param name="action">Action to be performed when action is selected, parameter is specified when action is applied to a notification</param>
-        void RegisterActionHandler(string categoryId, string actionId, string displayName, int iconId, Action<string> action);
+        /// <param name="id">Category identifier used for grouping actions</param>
+        ILocalNotificationActionRegistrar RegisterActionSet(string id);
 
         /// <summary>
         /// Build and show a custom local notification

@@ -1,31 +1,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using Android.Content;
+using Plugin.LocalNotifications.Abstractions;
 
 namespace Plugin.LocalNotifications
 {
     [BroadcastReceiver(Enabled = true, Label = "Local Notifications Plugin Action Broadcast Receiver")]
-    internal class LocalNotificationActionReceiver : BroadcastReceiver
+    public class LocalNotificationActionReceiver : BroadcastReceiver
     {
         public const string LocalNotificationIntentAction = "LocalNotificationIntentAction";
+        public const string LocalNotificationActionSetId = "LocalNotificationActionSetId";
         public const string LocalNotificationActionId = "LocalNotificationActionId";
         public const string LocalNotificationActionParameter = "LocalNotificationActionParameter";
 
-        private readonly List<LocalNotificationActionRegistration> _registeredActions;
+        private readonly List<LocalNotificationActionRegistrar> _actionRegistrars;
 
         public LocalNotificationActionReceiver()
         {
-            _registeredActions = new List<LocalNotificationActionRegistration>();
+            _actionRegistrars = new List<LocalNotificationActionRegistrar>();
         }
 
-        public void Register(LocalNotificationActionRegistration actionRegistration) => _registeredActions.Add(actionRegistration);
+        public ILocalNotificationActionRegistrar NewActionRegistrar(string actionSetId)
+        {
+            var registrar = new LocalNotificationActionRegistrar(actionSetId);
+            _actionRegistrars.Add(registrar);
+            return registrar;
+        }
 
-        public LocalNotificationActionRegistration GetRegisteredAction(string id) => _registeredActions.FirstOrDefault(a => a.Id == id);
+        public IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars.FirstOrDefault(a => a.Id == actionSetId)?.RegisteredActions;
 
         public override void OnReceive(Context context, Intent intent)
         {
+            var actionSetId = intent.HasExtra(LocalNotificationActionSetId) ? intent.GetStringExtra(LocalNotificationActionSetId) : null;
             var actionId = intent.HasExtra(LocalNotificationActionId) ? intent.GetStringExtra(LocalNotificationActionId) : null;
-            var action = GetRegisteredAction(actionId);
+            var action = GetRegisteredActions(actionSetId).FirstOrDefault(a => a.Id == actionId);
 
             if (action != null)
             {

@@ -44,21 +44,25 @@ namespace Plugin.LocalNotifications
             return this;
         }
 
-        public ILocalNotificationBuilder WithAction(string actionId, string parameter)
+        public ILocalNotificationBuilder WithActionSet(string actionSetId, string parameter)
         {
-            var registeredAction = _actionReceiver.GetRegisteredAction(actionId);
+            var registeredActions = _actionReceiver.GetRegisteredActions(actionSetId).ToArray();
 
-            if (registeredAction == null)
+            if (!registeredActions.Any())
             {
-                throw new InvalidOperationException($"Unable to associate action {actionId} with notification because it has not been registered.");
+                throw new InvalidOperationException($"Unable to associate action set id {actionSetId} with notification because it has not been registered.");
             }
 
-            _actions.Add(new LocalNotificationAction
+            foreach (var action in registeredActions)
             {
-                Id = actionId,
-                DisplayName = registeredAction.DisplayName,
-                Parameter = parameter
-            });
+                _actions.Add(new LocalNotificationAction
+                {
+                    Id = action.Id,
+                    DisplayName = action.DisplayName,
+                    Parameter = parameter
+                });
+            }
+
             return this;
         }
 

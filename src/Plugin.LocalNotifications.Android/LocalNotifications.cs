@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Support.V4.App;
 using Plugin.LocalNotifications.Abstractions;
 using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace Plugin.LocalNotifications
 {
@@ -20,16 +21,7 @@ namespace Plugin.LocalNotifications
             Application.Context.RegisterReceiver(_actionReceiver, new IntentFilter(LocalNotificationActionReceiver.LocalNotificationIntentAction));
         }
 
-        public void RegisterActionHandler(string categoryId, string actionId, string displayName, int iconId, Action<string> action)
-        {
-            _actionReceiver.Register(new LocalNotificationActionRegistration
-            {
-                Id = actionId,
-                IconId = iconId,
-                DisplayName = displayName,
-                Action = action,
-            });
-        }
+        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => _actionReceiver.NewActionRegistrar(id);
 
         public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(_actionReceiver, id);
 
