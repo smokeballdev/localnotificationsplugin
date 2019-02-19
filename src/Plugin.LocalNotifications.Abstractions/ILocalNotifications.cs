@@ -14,7 +14,7 @@ namespace Plugin.LocalNotifications.Abstractions
         ILocalNotificationActionRegistrar RegisterActionSet(string id);
 
         /// <summary>
-        /// Build and show a custom local notification
+        /// Build and show a custom local notification given the specified notification id
         /// </summary>
         /// <returns></returns>
         ILocalNotificationBuilder New(int id);
