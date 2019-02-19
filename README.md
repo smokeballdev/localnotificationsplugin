@@ -58,6 +58,8 @@ CrossLocalNotifications.Current
   .Show(DateTime.Now.AddSeconds(5));
 ```
 
+Note: Action set identifier must be unique, the identifier may then be used accross different notifications.
+
 #### Cancel a local notification
 
 ```csharp
