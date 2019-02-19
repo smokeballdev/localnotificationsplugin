@@ -19,6 +19,11 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationActionRegistrar NewActionRegistrar(string id)
         {
+            if (_actionRegistrars.Any(a => a.Id == id))
+            {
+                throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
+            }
+
             var registrar = new LocalNotificationActionRegistrar(id);
             _actionRegistrars.Add(registrar);
             return registrar;

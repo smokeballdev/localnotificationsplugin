@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Android.Content;
@@ -20,9 +21,14 @@ namespace Plugin.LocalNotifications
             _actionRegistrars = new List<LocalNotificationActionRegistrar>();
         }
 
-        public ILocalNotificationActionRegistrar NewActionRegistrar(string actionSetId)
+        public ILocalNotificationActionRegistrar NewActionRegistrar(string id)
         {
-            var registrar = new LocalNotificationActionRegistrar(actionSetId);
+            if (_actionRegistrars.Any(a => a.Id == id))
+            {
+                throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
+            }
+
+            var registrar = new LocalNotificationActionRegistrar(id);
             _actionRegistrars.Add(registrar);
             return registrar;
         }
