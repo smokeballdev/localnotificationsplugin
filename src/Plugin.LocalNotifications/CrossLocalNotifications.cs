@@ -30,7 +30,7 @@ namespace Plugin.LocalNotifications
 #if NETSTANDARD1_0
             return null;
 #else
-            return new LocalNotificationsImplementation();
+            return new LocalNotifications();
 #endif
         }
 

@@ -17,7 +17,7 @@ namespace Plugin.LocalNotifications
     {
         public string Id { get; set; }
         public int IconId { get; set; }
-        public string Title { get; set; }
+        public string DisplayName { get; set; }
         public string Parameter { get; set; }
     }
 }

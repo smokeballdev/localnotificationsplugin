@@ -4,9 +4,12 @@ using Android.Content;
 
 namespace Plugin.LocalNotifications
 {
+    [BroadcastReceiver(Enabled = true, Label = "Local Notifications Plugin Action Broadcast Receiver")]
     internal class LocalNotificationActionReceiver : BroadcastReceiver
     {
-        public const string LocalNotificationActionParameterKey = "LocalNotificationActionParameter";
+        public const string LocalNotificationIntentAction = "LocalNotificationIntentAction";
+        public const string LocalNotificationActionId = "LocalNotificationActionId";
+        public const string LocalNotificationActionParameter = "LocalNotificationActionParameter";
 
         private readonly List<LocalNotificationActionRegistration> _registeredActions;
 
@@ -21,15 +24,14 @@ namespace Plugin.LocalNotifications
 
         public override void OnReceive(Context context, Intent intent)
         {
-            var action = GetRegisteredAction(intent.Action);
+            var actionId = intent.HasExtra(LocalNotificationActionId) ? intent.GetStringExtra(LocalNotificationActionId) : null;
+            var action = GetRegisteredAction(actionId);
 
             if (action != null)
             {
-                var key = LocalNotificationActionParameterKey + intent.Action;
-                var parameter = intent.HasExtra(key) ? intent.GetStringExtra(key) : null;
+                var parameter = intent.HasExtra(LocalNotificationActionParameter) ? intent.GetStringExtra(LocalNotificationActionParameter) : null;
                 action.Action(parameter);
             }
         }
-
     }
 }

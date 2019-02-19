@@ -9,29 +9,26 @@ namespace Plugin.LocalNotifications
     /// <summary>
     /// Local Notifications implementation for Android
     /// </summary>
-    public class LocalNotificationsImplementation : ILocalNotifications
+    public class LocalNotifications : ILocalNotifications
     {
-        private readonly IntentFilter _actionIntentFilter;
         private readonly LocalNotificationActionReceiver _actionReceiver;
 
-        public LocalNotificationsImplementation()
+        public LocalNotifications()
         {
-            _actionIntentFilter = new IntentFilter();
             _actionReceiver = new LocalNotificationActionReceiver();
 
-            Application.Context.RegisterReceiver(_actionReceiver, _actionIntentFilter);
+            Application.Context.RegisterReceiver(_actionReceiver, new IntentFilter(LocalNotificationActionReceiver.LocalNotificationIntentAction));
         }
 
-        public void RegisterAction(int iconId, string categoryId, string actionId, string displayName, Action<string> action)
+        public void RegisterActionHandler(string categoryId, string actionId, string displayName, int iconId, Action<string> action)
         {
             _actionReceiver.Register(new LocalNotificationActionRegistration
             {
                 Id = actionId,
                 IconId = iconId,
-                Title = displayName,
+                DisplayName = displayName,
                 Action = action,
             });
-            _actionIntentFilter.AddAction(actionId);
         }
 
         public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(_actionReceiver, id);

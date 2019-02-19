@@ -10,11 +10,11 @@ namespace Plugin.LocalNotifications
     /// <summary>
     /// Local Notifications implementation for iOS
     /// </summary>
-    public class LocalNotificationsImplementation : ILocalNotifications
+    public class LocalNotifications : ILocalNotifications
     {
         private const string NotificationKey = "LocalNotificationKey";
 
-        public void RegisterAction(int iconId, string categoryId, string actionId, string displayName, Action<string> action)
+        public void RegisterActionHandler(string categoryId, string actionId, string displayName, int iconId, Action<string> action)
         {
             throw new NotImplementedException();
         }

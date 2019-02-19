@@ -56,7 +56,7 @@ namespace Plugin.LocalNotifications
             _actions.Add(new LocalNotificationAction
             {
                 Id = actionId,
-                Title = registeredAction.Title,
+                DisplayName = registeredAction.DisplayName,
                 Parameter = parameter
             });
             return this;
@@ -81,7 +81,7 @@ namespace Plugin.LocalNotifications
 
             intent.PutExtra(ScheduledAlarmHandler.LocalNotificationKey, localNotification.Serialize());
 
-            var pendingIntent = PendingIntent.GetBroadcast(Application.Context, Guid.NewGuid().GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
+            var pendingIntent = PendingIntent.GetBroadcast(Application.Context, GetRandomId(), intent, PendingIntentFlags.CancelCurrent);
             var triggerTime = localNotification.NotifyTime.AsEpochMilliseconds();
 
             if (!(Application.Context.GetSystemService(Context.AlarmService) is AlarmManager alarmManager))
@@ -92,8 +92,11 @@ namespace Plugin.LocalNotifications
             alarmManager.Set(AlarmType.RtcWakeup, triggerTime, pendingIntent);
         }
 
-        public void Show() => Notify(GetLocalNotification());
-
+        public void Show()
+        {
+            Notify(GetLocalNotification());
+        }
+        
         public static void Notify(LocalNotification notification)
         {
             var builder = new Notification.Builder(Application.Context);
@@ -101,6 +104,7 @@ namespace Plugin.LocalNotifications
             builder.SetContentText(notification.Body);
             builder.SetAutoCancel(true);
             builder.SetActions(GetNotificationActions(notification.Actions).ToArray());
+            builder.SetPriority((int)NotificationPriority.Max);
 
             if (notification.IconId != 0)
             {
@@ -116,7 +120,7 @@ namespace Plugin.LocalNotifications
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 var channelId = $"{packageName}.general";
-                var channel = new NotificationChannel(channelId, "General", NotificationImportance.Default);
+                var channel = new NotificationChannel(channelId, "General", NotificationImportance.Max);
 
                 _manager.CreateNotificationChannel(channel);
 
@@ -139,15 +143,16 @@ namespace Plugin.LocalNotifications
         {
             foreach (var action in actions)
             {
-                var actionIntent = new Intent(action.Id);
-                // TODO: Is this correct?? is this the intent that gets passed to the receiver??
-                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionParameterKey + action.Id, action.Parameter);
+                var actionIntent = new Intent();
+                actionIntent.SetAction(LocalNotificationActionReceiver.LocalNotificationIntentAction);
+                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionId, action.Id);
+                actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionParameter, action.Parameter);
 
-                var actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, Guid.NewGuid().GetHashCode(), actionIntent, PendingIntentFlags.CancelCurrent);
+                var actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, GetRandomId(), actionIntent, PendingIntentFlags.CancelCurrent);
 
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
-                yield return new Notification.Action(iconId, action.Title, actionPendingIntent);
+                yield return new Notification.Action(iconId, action.DisplayName, actionPendingIntent);
             }
         }
 
@@ -160,5 +165,7 @@ namespace Plugin.LocalNotifications
                 Body = _body,
                 Actions = _actions,
             };
+
+        private static int GetRandomId() => Guid.NewGuid().GetHashCode();
     }
 }
