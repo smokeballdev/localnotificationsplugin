@@ -54,7 +54,7 @@ CrossLocalNotifications.Current
   .New(1)
   .WithTitle("title")
   .WithBody("body")
-  .WithActionSet("ReminderActions")
+  .WithActionSet("ReminderActions", "Parameter")
   .Show(DateTime.Now.AddSeconds(5));
 ```
 
