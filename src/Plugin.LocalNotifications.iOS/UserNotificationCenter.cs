@@ -10,7 +10,7 @@ namespace Plugin.LocalNotifications
     {
         private readonly List<LocalNotificationActionRegistrar> _actionRegistrars;
 
-        public const string LocalNotificationActionParameter = "LocalNotificationActionParameter";
+        public const string LocalNotificationActionParameterKey = "LocalNotificationActionParameterKey";
 
         public UserNotificationCenter()
         {
@@ -38,9 +38,14 @@ namespace Plugin.LocalNotifications
 
             if (action != null)
             {
-                var parameter = response.Notification.Request.Content.UserInfo[LocalNotificationActionParameter]?.ToString();
+                var parameter = response.Notification.Request.Content.UserInfo[LocalNotificationActionParameterKey]?.ToString();
                 action.Action(parameter);
             }
+        }
+
+        public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
+        {
+            completionHandler(UNNotificationPresentationOptions.Alert);
         }
     }
 }

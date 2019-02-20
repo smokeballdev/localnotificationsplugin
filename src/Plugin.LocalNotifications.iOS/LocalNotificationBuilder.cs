@@ -48,7 +48,7 @@ namespace Plugin.LocalNotifications
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
                 var trigger = UNCalendarNotificationTrigger.CreateTrigger(GetNSDateComponentsFromDateTime(notifyAt), false);
-                ShowUserNotification(_title, _body, _id, trigger);
+                ShowUserNotification(trigger);
             }
             else
             {
@@ -58,9 +58,8 @@ namespace Plugin.LocalNotifications
                     FireDate = (NSDate)notifyAt,
                     AlertTitle = _title,
                     AlertBody = _body,
-                    UserInfo = NSDictionary.FromObjectAndKey(NSObject.FromObject(_id), NSObject.FromObject(LocalNotifications.NotificationKey)),
+                    UserInfo = GetUserInfo()
                 };
-                notification.UserInfo.SetValueForKey(NSObject.FromObject(_actionSetParameter), new NSString(""));
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
             }
@@ -71,7 +70,7 @@ namespace Plugin.LocalNotifications
             Show(DateTime.Now);
         }
 
-        private void ShowUserNotification(string title, string body, int id, UNNotificationTrigger trigger)
+        private void ShowUserNotification(UNNotificationTrigger trigger)
         {
             if (!UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
@@ -81,17 +80,17 @@ namespace Plugin.LocalNotifications
             var content = new UNMutableNotificationContent
             {
                 CategoryIdentifier = _actionSetId,
-                Title = title,
-                Body = body,
+                Title = _title,
+                Body = _body,
+                UserInfo = GetUserInfo()
             };
-            content.UserInfo.SetValueForKey(NSObject.FromObject(_actionSetParameter), new NSString(""));
 
-            var request = UNNotificationRequest.FromIdentifier(id.ToString(), content, trigger);
+            var request = UNNotificationRequest.FromIdentifier(_id.ToString(), content, trigger);
 
             UNUserNotificationCenter.Current.AddNotificationRequest(request, error => { });
         }
 
-        private NSDateComponents GetNSDateComponentsFromDateTime(DateTime dateTime)
+        private static NSDateComponents GetNSDateComponentsFromDateTime(DateTime dateTime)
         {
             return new NSDateComponents
             {
@@ -102,6 +101,18 @@ namespace Plugin.LocalNotifications
                 Minute = dateTime.Minute,
                 Second = dateTime.Second
             };
+        }
+
+        private NSDictionary GetUserInfo()
+        {
+            var userInfo = NSMutableDictionary.FromObjectAndKey(NSObject.FromObject(_id), NSObject.FromObject(LocalNotifications.NotificationKey));
+
+            if (_actionSetId != null)
+            {
+                userInfo.SetValueForKey(NSObject.FromObject(_actionSetParameter), new NSString(UserNotificationCenter.LocalNotificationActionParameterKey));
+            }
+
+            return userInfo;
         }
     }
 }
