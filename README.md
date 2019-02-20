@@ -107,13 +107,6 @@ and check out [Xamarin's iOS 10 UserNotifications framework documentation](https
 #### Android
 Currently, if the phone is re-booted then the pending notifications are not sent, you should save them out to settings and re-send on re-boot.
 
-##### Notification Icon on Android
-You can set the notification Icon by setting the following property from inside your Android project:
-
-```csharp
-LocalNotificationsImplementation.NotificationIconId = Resource.Drawable.YOU_ICON_HERE
-```
-
 ### Contributors
 
 * [James Montemagno](https://github.com/jamesmontemagno)
