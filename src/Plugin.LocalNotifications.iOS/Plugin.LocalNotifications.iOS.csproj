@@ -103,8 +103,11 @@
     <Compile Include="..\Plugin.LocalNotifications\CrossLocalNotifications.cs">
       <Link>CrossLocalNotifications.cs</Link>
     </Compile>
-    <Compile Include="LocalNotificationsImplementation.cs" />
+    <Compile Include="LocalNotificationActionRegistrar.cs" />
+    <Compile Include="LocalNotificationBuilder.cs" />
+    <Compile Include="LocalNotifications.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserNotificationCenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -5,11 +5,11 @@ using Plugin.LocalNotifications.Abstractions;
 namespace Plugin.LocalNotifications
 {
     /// <summary>
-    /// Access Cross Local Notifictions
+    /// Access Cross Local Notifications
     /// </summary>
     public static class CrossLocalNotifications
     {
-        private static Lazy<ILocalNotifications> _impl = new Lazy<ILocalNotifications>(CreateLocalNotificationsImplementation, LazyThreadSafetyMode.PublicationOnly);
+        private static readonly Lazy<ILocalNotifications> _impl = new Lazy<ILocalNotifications>(CreateLocalNotificationsImplementation, LazyThreadSafetyMode.PublicationOnly);
 
         /// <summary>
         /// Gets the current platform specific ILocalNotifications implementation.
@@ -30,7 +30,7 @@ namespace Plugin.LocalNotifications
 #if NETSTANDARD1_0
             return null;
 #else
-            return new LocalNotificationsImplementation();
+            return new LocalNotifications();
 #endif
         }
 

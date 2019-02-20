@@ -14,9 +14,9 @@
     <FileAlignment>512</FileAlignment>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
-    <AndroidTlsProvider></AndroidTlsProvider>
+    <AndroidTlsProvider>
+    </AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,8 +52,12 @@
     <Compile Include="..\Plugin.LocalNotifications\CrossLocalNotifications.cs">
       <Link>CrossLocalNotifications.cs</Link>
     </Compile>
-    <Compile Include="LocalNotification.cs" />
-    <Compile Include="LocalNotificationsImplementation.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="LocalNotificationActionRegistrar.cs" />
+    <Compile Include="Models\LocalNotification.cs" />
+    <Compile Include="LocalNotificationActionReceiver.cs" />
+    <Compile Include="LocalNotificationBuilder.cs" />
+    <Compile Include="LocalNotifications.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScheduledAlarmHandler.cs" />
