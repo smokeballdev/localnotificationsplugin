@@ -71,9 +71,6 @@ CrossLocalNotifications.Current.Cancel(101);
 
 Some platforms require certain permissions or settings before it will display notifications.
 
-#### Windows and Windows Phone 8.1
-You must enable notifications in the .appmanifest file by setting the "Toast capable" property to "Yes".
-
 #### iOS 8.0+ 
 You must get permission from the user to allow the app to show local notifications.
 
