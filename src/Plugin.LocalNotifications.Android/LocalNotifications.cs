@@ -11,11 +11,10 @@ namespace Plugin.LocalNotifications
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
-        private static LocalNotificationActionReceiver _actionReceiver;
+        private static readonly LocalNotificationActionReceiver _actionReceiver = new LocalNotificationActionReceiver();
 
         public static void Register(int notificationIconId)
         {
-            _actionReceiver = new LocalNotificationActionReceiver();
             NotificationIconId = notificationIconId;
             Application.Context.RegisterReceiver(_actionReceiver, new IntentFilter(LocalNotificationActionReceiver.LocalNotificationIntentAction));
         }
