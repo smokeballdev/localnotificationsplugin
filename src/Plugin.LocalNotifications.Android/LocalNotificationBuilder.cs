@@ -53,7 +53,7 @@ namespace Plugin.LocalNotifications
                 throw new InvalidOperationException($"Unable to associate action set id {actionSetId} with notification because it has not been registered.");
             }
 
-            foreach (var action in registeredActions)
+            foreach (var action in registeredActions.OfType<ButtonLocalNotificationActionRegistration>())
             {
                 _actions.Add(new LocalNotificationAction
                 {

@@ -109,7 +109,7 @@ namespace Plugin.LocalNotifications
 
             if (_actionSetId != null)
             {
-                userInfo.SetValueForKey(NSObject.FromObject(_actionSetParameter), new NSString(UserNotificationCenter.LocalNotificationActionParameterKey));
+                userInfo.SetValueForKey(NSObject.FromObject(_actionSetParameter), new NSString(UserNotificationCenterDelegate.LocalNotificationActionParameterKey));
             }
 
             return userInfo;

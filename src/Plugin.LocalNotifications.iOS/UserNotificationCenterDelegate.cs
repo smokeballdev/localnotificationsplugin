@@ -6,13 +6,13 @@ using UserNotifications;
 
 namespace Plugin.LocalNotifications
 {
-    internal class UserNotificationCenter : UNUserNotificationCenterDelegate
+    public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
     {
         private readonly List<LocalNotificationActionRegistrar> _actionRegistrars;
 
         public const string LocalNotificationActionParameterKey = "LocalNotificationActionParameterKey";
 
-        public UserNotificationCenter()
+        public UserNotificationCenterDelegate()
         {
             _actionRegistrars = new List<LocalNotificationActionRegistrar>();
         }
@@ -31,16 +31,23 @@ namespace Plugin.LocalNotifications
 
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
-            var categoryId = response.Notification.Request.Content.CategoryIdentifier;
-            var actionSet = _actionRegistrars.FirstOrDefault(r => r.Id == categoryId);
+            var actionSetId = response.Notification.Request.Content.CategoryIdentifier;
+            var actionSet = _actionRegistrars.FirstOrDefault(r => r.Id == actionSetId);
 
-            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Title == response.ActionIdentifier);
+            // Perform default dismiss action if available, otherwise perform selected action
+            var actionIdentifier = response.IsDismissAction || response.IsDefaultAction ?
+                LocalNotificationActionRegistration.DismissActionIdentifier :
+                response.ActionIdentifier;
+
+            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Id == actionIdentifier);
 
             if (action != null)
             {
                 var parameter = response.Notification.Request.Content.UserInfo[LocalNotificationActionParameterKey]?.ToString();
                 action.Action(parameter);
             }
+
+            completionHandler();
         }
 
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
