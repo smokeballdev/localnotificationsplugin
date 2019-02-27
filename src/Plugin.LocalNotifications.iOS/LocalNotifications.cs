@@ -13,16 +13,14 @@ namespace Plugin.LocalNotifications
     {
         public const string NotificationKey = "LocalNotificationKey";
 
-        private readonly UserNotificationCenter _userNotificationCenter; 
+        public readonly UserNotificationCenterDelegate UserNotificationCenterDelegate; 
 
         public LocalNotifications()
         {
-            _userNotificationCenter = new UserNotificationCenter();
-
-            UNUserNotificationCenter.Current.Delegate = _userNotificationCenter;
+            UserNotificationCenterDelegate = new UserNotificationCenterDelegate();
         }
 
-        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => _userNotificationCenter.NewActionRegistrar(id);
+        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => UserNotificationCenterDelegate.NewActionRegistrar(id);
 
         public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(id);
 

@@ -107,7 +107,7 @@
     <Compile Include="LocalNotificationBuilder.cs" />
     <Compile Include="LocalNotifications.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserNotificationCenter.cs" />
+    <Compile Include="UserNotificationCenterDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

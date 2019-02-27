@@ -12,25 +12,36 @@ namespace Plugin.LocalNotifications
             Id = id;
         }
 
-        public ILocalNotificationActionRegistrar WithActionHandler(string title, int iconId, Action<string> action)
+        public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action)
         {
-            if (RegisteredActions.Any(a => a.Title == title))
+            if (RegisteredActions.Any(a => a.Id == title))
             {
                 throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
             }
 
-            RegisteredActions.Add(new LocalNotificationActionRegistration
+            RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
                 ActionSetId = Id,
+                Id = title,
                 Title = title,
-                IconId = iconId,
                 Action = action
             });
 
             return this;
         }
 
-        // TODO: Consider removing
+        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action)
+        {
+            RegisteredActions.Add(new LocalNotificationActionRegistration
+            {
+                Id = LocalNotificationActionRegistration.DismissActionIdentifier,
+                ActionSetId = Id,
+                Action = action
+            });
+
+            return this;
+        }
+
         public void Register()
         {
             // Do nothing

@@ -14,15 +14,16 @@ namespace Plugin.LocalNotifications
             Id = categoryId;
         }
 
-        public ILocalNotificationActionRegistrar WithActionHandler(string title, int iconId, Action<string> action)
+        public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action)
         {
-            if (RegisteredActions.Any(a => a.Title == title))
+            if (RegisteredActions.Any(a => a.Id == title))
             {
                 throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
             }
 
-            RegisteredActions.Add(new LocalNotificationActionRegistration
+            RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
+                Id = title,
                 ActionSetId = Id,
                 Title = title,
                 Action = action,
@@ -31,11 +32,28 @@ namespace Plugin.LocalNotifications
             return this;
         }
 
+        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action)
+        {
+            RegisteredActions.Add(new LocalNotificationActionRegistration
+            {
+                Id = LocalNotificationActionRegistration.DismissActionIdentifier,
+                ActionSetId = Id,
+                Action = action
+            });
+
+            return this;
+        }
+
         public void Register()
         {
+            var actions = RegisteredActions
+                .OfType<ButtonLocalNotificationActionRegistration>()
+                .Select(action => UNNotificationAction.FromIdentifier(action.Title, action.Title, UNNotificationActionOptions.Foreground))
+                .ToArray();
+
             var category = UNNotificationCategory.FromIdentifier(
                 Id,
-                RegisteredActions.Select(action => UNNotificationAction.FromIdentifier(action.Title, action.Title, UNNotificationActionOptions.Foreground)).ToArray(),
+                actions,
                 new string[] { },
                 UNNotificationCategoryOptions.CustomDismissAction);
 
