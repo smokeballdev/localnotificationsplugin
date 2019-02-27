@@ -13,7 +13,7 @@ namespace Plugin.LocalNotifications
     {
         public const string NotificationKey = "LocalNotificationKey";
 
-        public static readonly UserNotificationCenterDelegate UserNotificationCenterDelegate = new UserNotificationCenterDelegate(); 
+        public static void Register() => UNUserNotificationCenter.Current.Delegate = UserNotificationCenterDelegate;
 
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => UserNotificationCenterDelegate.NewActionRegistrar(id);
 
@@ -42,5 +42,7 @@ namespace Plugin.LocalNotifications
                 }
             }
         }
+
+        private static readonly UserNotificationCenterDelegate UserNotificationCenterDelegate = new UserNotificationCenterDelegate();
     }
 }
