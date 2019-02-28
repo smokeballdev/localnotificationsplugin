@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
+using Plugin.LocalNotifications.Abstractions;
 
 namespace Plugin.LocalNotifications.Extensions
 {
@@ -32,6 +33,29 @@ namespace Plugin.LocalNotifications.Extensions
             {
                 return (T)xmlSerializer.Deserialize(stringReader);
             }
+        }
+
+        public static LocalNotificationAction ToAction(this ButtonLocalNotificationActionRegistration registration, string parameter)
+        {
+            return new LocalNotificationAction
+            {
+                ActionSetId = registration.ActionSetId,
+                Id = registration.Id,
+                Title = registration.Title,
+                IconId = registration.IconId,
+                Parameter = parameter
+            };
+        }
+
+        public static LocalNotificationAction ToAction(this LocalNotificationActionRegistration registration, string parameter)
+        {
+            return new LocalNotificationAction
+            {
+                ActionSetId = registration.ActionSetId,
+                Id = registration.Id,
+                IconId = registration.IconId,
+                Parameter = parameter
+            };
         }
     }
 }
