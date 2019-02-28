@@ -107,8 +107,12 @@ namespace Plugin.LocalNotifications
             builder.SetContentTitle(notification.Title);
             builder.SetContentText(notification.Body);
             builder.SetAutoCancel(true);
-            builder.SetActions(GetNotificationActions(notification.Actions).ToArray());
             builder.SetPriority((int)NotificationPriority.Max);
+
+            if (notification.Actions.Any())
+            {
+                builder.SetActions(GetNotificationActions(notification.Actions).ToArray());
+            }
 
             if (notification.IconId != 0)
             {

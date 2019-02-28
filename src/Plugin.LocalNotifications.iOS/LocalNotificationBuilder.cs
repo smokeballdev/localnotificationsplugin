@@ -54,12 +54,16 @@ namespace Plugin.LocalNotifications
             {
                 var notification = new UILocalNotification
                 {
-                    Category = _actionSetId,
                     FireDate = (NSDate)notifyAt,
                     AlertTitle = _title,
                     AlertBody = _body,
                     UserInfo = GetUserInfo()
                 };
+
+                if (_actionSetId != null)
+                {
+                    notification.Category = _actionSetId;
+                }
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
             }
