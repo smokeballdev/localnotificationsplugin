@@ -70,7 +70,7 @@ CrossLocalNotifications.Current.Cancel(101);
 
 ### Platform Specific Notes
 
-Some platforms require certain permissions or settings before it will display notifications.
+Some platforms require certain permissions or settings before it will display notifications. 
 
 #### iOS 8.0+ 
 You must get permission from the user to allow the app to show local notifications.
