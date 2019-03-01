@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Plugin.LocalNotifications
 {
-    internal class LocalNotification
+    public class LocalNotification
     {
         public string Title { get; set; }
         public string Body { get; set; }
@@ -13,7 +13,7 @@ namespace Plugin.LocalNotifications
         public List<LocalNotificationAction> Actions { get; set; }
     }
 
-    internal class LocalNotificationAction
+    public class LocalNotificationAction
     {
         public string Id { get; set; }
         public string ActionSetId { get; set; }

@@ -16,7 +16,12 @@ namespace Plugin.LocalNotifications
         public static void Register(int notificationIconId)
         {
             NotificationIconId = notificationIconId;
-            Application.Context.RegisterReceiver(_actionReceiver, new IntentFilter(LocalNotificationActionReceiver.LocalNotificationIntentAction));
+
+            var intentFilter = new IntentFilter();
+            intentFilter.AddAction(LocalNotificationActionReceiver.LocalNotificationIntentAction);
+            intentFilter.AddAction(LocalNotificationActionReceiver.LocalNotificationIntentDismiss);
+
+            Application.Context.RegisterReceiver(_actionReceiver, intentFilter);
         }
 
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => _actionReceiver.NewActionRegistrar(id);

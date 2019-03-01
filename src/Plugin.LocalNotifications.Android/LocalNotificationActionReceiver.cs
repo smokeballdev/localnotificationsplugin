@@ -10,6 +10,7 @@ namespace Plugin.LocalNotifications
     public class LocalNotificationActionReceiver : BroadcastReceiver
     {
         public const string LocalNotificationIntentAction = "LocalNotificationIntentAction";
+        public const string LocalNotificationIntentDismiss = "LocalNotificationIntentDismiss";
         public const string LocalNotificationActionSetId = "LocalNotificationActionSetId";
         public const string LocalNotificationActionId = "LocalNotificationActionId";
         public const string LocalNotificationActionParameter = "LocalNotificationActionParameter";
