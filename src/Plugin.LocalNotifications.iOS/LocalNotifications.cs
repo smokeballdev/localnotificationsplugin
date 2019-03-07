@@ -19,7 +19,7 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => UserNotificationCenterDelegate.NewActionRegistrar(id);
 
-        public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(id);
+        public ILocalNotificationBuilder New(int id) => new NotificationBuilder(id);
 
         /// <summary>
         /// Cancel a local notification

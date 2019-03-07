@@ -6,7 +6,7 @@ using UserNotifications;
 
 namespace Plugin.LocalNotifications
 {
-    public class LocalNotificationBuilder : ILocalNotificationBuilder
+    public class NotificationBuilder : ILocalNotificationBuilder
     {
         private readonly int _id;
         private string _title;
@@ -14,7 +14,7 @@ namespace Plugin.LocalNotifications
         private string _actionSetId;
         private string _actionSetParameter;
 
-        public LocalNotificationBuilder(int id)
+        public NotificationBuilder(int id)
         {
             _id = id;
         }

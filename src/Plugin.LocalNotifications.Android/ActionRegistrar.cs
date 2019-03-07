@@ -10,20 +10,20 @@ namespace Plugin.LocalNotifications
     {
         public ActionRegistrar(string id)
         {
-            Id = id;
+            ActionSetId = id;
         }
 
         public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action)
         {
-            if (RegisteredActions.Any(a => a.Id == title))
+            if (RegisteredActions.OfType<ButtonLocalNotificationActionRegistration>().Any(a => a.Title == title))
             {
-                throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
+                throw new InvalidOperationException($"Could not register action {title} into action set {ActionSetId} because one has with the same name has already been registered");
             }
 
             RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
-                ActionSetId = Id,
-                Id = ActionIdentifiers.Action,
+                ActionSetId = ActionSetId,
+                ActionId = ActionIdentifiers.Action,
                 Title = title,
                 Action = action
             });
@@ -35,13 +35,13 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
 
-        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string id, Action<string> action)
+        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string actionId, Action<string> action)
         {
-            RegisteredActions.RemoveAll(a => a.Id == id);
+            RegisteredActions.RemoveAll(a => a.ActionId == actionId);
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
-                ActionSetId = Id,
-                Id = id,
+                ActionSetId = ActionSetId,
+                ActionId = actionId,
                 Action = action
             });
 
@@ -53,7 +53,7 @@ namespace Plugin.LocalNotifications
             // Do nothing
         }
 
-        public string Id { get; }
+        public string ActionSetId { get; }
         public List<LocalNotificationActionRegistration> RegisteredActions { get; } = new List<LocalNotificationActionRegistration>();
     }
 }

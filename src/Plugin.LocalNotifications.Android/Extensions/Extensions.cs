@@ -43,8 +43,9 @@ namespace Plugin.LocalNotifications.Extensions
             {
                 return new LocalNotificationAction
                 {
+                    Id = registration.Id,
                     ActionSetId = registration.ActionSetId,
-                    Id = registration.UniqueIdentifier,
+                    ActionId = registration.ActionId,
                     IconId = registration.IconId,
                     Parameter = parameter,
                     Title = buttonRegistration.Title,
@@ -53,8 +54,9 @@ namespace Plugin.LocalNotifications.Extensions
 
             return new LocalNotificationAction
             {
+                Id = registration.Id,
                 ActionSetId = registration.ActionSetId,
-                Id = registration.UniqueIdentifier,
+                ActionId = registration.ActionId,
                 IconId = registration.IconId,
                 Parameter = parameter
             };

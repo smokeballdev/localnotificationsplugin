@@ -5,6 +5,7 @@ namespace Plugin.LocalNotifications
 {
     public class LocalNotification
     {
+        public const string NotificationId = "LocalNotification.NotificationId";
         public const string ActionSetId = "LocalNotification.ActionSetId";
         public const string ActionId = "LocalNotification.ActionId";
         public const string ActionParameter = "LocalNotification.ActionParameter";
@@ -20,6 +21,7 @@ namespace Plugin.LocalNotifications
     public class LocalNotificationAction
     {
         public string Id { get; set; }
+        public string ActionId { get; set; }
         public string ActionSetId { get; set; }
         public int IconId { get; set; }
         public string Title { get; set; }

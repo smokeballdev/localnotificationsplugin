@@ -111,21 +111,21 @@ namespace Plugin.LocalNotifications
             }
 
             // Tapping on the notification
-            var defaultAction = notification.Actions.FirstOrDefault(a => a.Id == ActionIdentifiers.Default);
-            builder.SetContentIntent(CreateActivityPendingIntent(defaultAction, ActionIdentifiers.Default));
+            var defaultAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Default);
+            builder.SetContentIntent(CreateActivityPendingIntent(notification.Id, defaultAction, ActionIdentifiers.Default));
 
             // Dismissing a notification (swiping the notification)
-            var dismissAction = notification.Actions.FirstOrDefault(a => a.Id == ActionIdentifiers.Dismiss);
+            var dismissAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Dismiss);
             if (dismissAction != null)
             {
-                builder.SetDeleteIntent(CreateActivityPendingIntent(dismissAction, ActionIdentifiers.Dismiss, typeof(DismissActionReceiver)));
+                builder.SetDeleteIntent(CreateActivityPendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, typeof(DismissActionReceiver)));
             }
 
             // User actions
-            var actions = notification.Actions.Where(a => a.Id == ActionIdentifiers.Action).ToArray();
+            var actions = notification.Actions.Where(a => a.ActionId == ActionIdentifiers.Action).ToArray();
             if (actions.Any())
             {
-                builder.SetActions(GetNotificationActions(actions).ToArray());
+                builder.SetActions(GetNotificationActions(notification.Id, actions).ToArray());
             }
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -141,24 +141,24 @@ namespace Plugin.LocalNotifications
             _manager.Notify(notification.Id, builder.Build());
         }
 
-        private static IEnumerable<Notification.Action> GetNotificationActions(IEnumerable<LocalNotificationAction> actions)
+        private static IEnumerable<Notification.Action> GetNotificationActions(int notificationId, IEnumerable<LocalNotificationAction> actions)
         {
             foreach (var action in actions)
             {
-                var pendingIntent = CreateActivityPendingIntent(action, ActionIdentifiers.Action);
+                var pendingIntent = CreateActivityPendingIntent(notificationId, action, ActionIdentifiers.Action);
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
                 yield return new Notification.Action(iconId, action.Title, pendingIntent);
             }
         }
 
-        private static PendingIntent CreateActivityPendingIntent(LocalNotificationAction action, string actionType, Type classType = null)
+        private static PendingIntent CreateActivityPendingIntent(int notificationId, LocalNotificationAction action, string actionType, Type classType = null)
         {
-            var intent = CreateIntent(action, actionType, classType);
+            var intent = CreateIntent(notificationId, action, actionType, classType);
             return PendingIntent.GetActivity(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
-        private static Intent CreateIntent(LocalNotificationAction notificationAction, string action, Type classType = null)
+        private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, string action, Type classType = null)
         {
             Intent intent = null;
 
@@ -179,8 +179,9 @@ namespace Plugin.LocalNotifications
 
             if (notificationAction != null)
             {
+                intent.PutExtra(LocalNotification.NotificationId, notificationId);
                 intent.PutExtra(LocalNotification.ActionSetId, notificationAction.ActionSetId);
-                intent.PutExtra(LocalNotification.ActionId, notificationAction.Id);
+                intent.PutExtra(LocalNotification.ActionId, notificationAction.ActionId);
                 intent.PutExtra(LocalNotification.ActionParameter, notificationAction.Parameter);
             }
 

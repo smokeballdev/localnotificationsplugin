@@ -9,13 +9,13 @@ namespace Plugin.LocalNotifications
 {
     public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
     {
-        private readonly List<LocalNotificationActionRegistrar> _actionRegistrars;
+        private readonly List<ActionRegistrar> _actionRegistrars;
 
         public const string LocalNotificationActionParameterKey = "LocalNotificationActionParameterKey";
 
         public UserNotificationCenterDelegate()
         {
-            _actionRegistrars = new List<LocalNotificationActionRegistrar>();
+            _actionRegistrars = new List<ActionRegistrar>();
         }
 
         public ILocalNotificationActionRegistrar NewActionRegistrar(string id)
@@ -25,7 +25,7 @@ namespace Plugin.LocalNotifications
                 throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
             }
 
-            var registrar = new LocalNotificationActionRegistrar(id);
+            var registrar = new ActionRegistrar(id);
             _actionRegistrars.Add(registrar);
             return registrar;
         } 

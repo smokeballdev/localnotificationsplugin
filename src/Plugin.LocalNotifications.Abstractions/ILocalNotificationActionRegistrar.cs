@@ -34,22 +34,28 @@ namespace Plugin.LocalNotifications.Abstractions
         /// <summary>
         /// Id for grouping the registered actions
         /// </summary>
-        string Id { get; }
+        string ActionSetId { get; }
     }
 
     public class LocalNotificationActionRegistration
     {
-        public virtual string UniqueIdentifier => Id;
+        /// <summary>
+        /// Unique identifier for the action
+        /// </summary>
+        public virtual string Id => ActionId;
 
         public string ActionSetId { get; set; }
-        public string Id { get; set; }
+        public string ActionId { get; set; }
         public int IconId { get; set; }
         public Action<string> Action { get; set; }
     }
 
     public class ButtonLocalNotificationActionRegistration : LocalNotificationActionRegistration
     {
-        public override string UniqueIdentifier => ActionSetId + Title;
+        /// <summary>
+        /// Unique identifier for the actions
+        /// </summary>
+        public override string Id => ActionSetId + Title;
 
         public string Title { get; set; }
     }

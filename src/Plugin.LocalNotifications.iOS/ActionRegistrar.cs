@@ -8,24 +8,24 @@ using UserNotifications;
 
 namespace Plugin.LocalNotifications
 {
-    public class LocalNotificationActionRegistrar : ILocalNotificationActionRegistrar
+    public class ActionRegistrar : ILocalNotificationActionRegistrar
     {
-        public LocalNotificationActionRegistrar(string categoryId)
+        public ActionRegistrar(string categoryId)
         {
-            Id = categoryId;
+            ActionSetId = categoryId;
         }
 
         public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action)
         {
-            if (RegisteredActions.Any(a => a.Id == title))
+            if (RegisteredActions.OfType<ButtonLocalNotificationActionRegistration>().Any(a => a.Title == title))
             {
-                throw new InvalidOperationException($"Could not register action {title} into action set {Id} because one has with the same name ahs already been registered");
+                throw new InvalidOperationException($"Could not register action {title} into action set {ActionSetId} because one has with the same name has already been registered");
             }
 
             RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
-                ActionSetId = Id,
-                Id = title,
+                ActionSetId = ActionSetId,
+                ActionId = title,
                 Title = title,
                 Action = action,
             });
@@ -37,13 +37,13 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
 
-        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string id, Action<string> action)
+        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string actionId, Action<string> action)
         {
-            RegisteredActions.RemoveAll(a => a.Id == id);
+            RegisteredActions.RemoveAll(a => a.ActionId == actionId);
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
-                ActionSetId = Id,
-                Id = id,
+                ActionSetId = ActionSetId,
+                ActionId = actionId,
                 Action = action
             });
 
@@ -54,11 +54,11 @@ namespace Plugin.LocalNotifications
         {
             var actions = RegisteredActions
                 .OfType<ButtonLocalNotificationActionRegistration>()
-                .Select(action => UNNotificationAction.FromIdentifier(action.UniqueIdentifier, action.Title, UNNotificationActionOptions.Foreground))
+                .Select(action => UNNotificationAction.FromIdentifier(action.Id, action.Title, UNNotificationActionOptions.Foreground))
                 .ToArray();
 
             var category = UNNotificationCategory.FromIdentifier(
-                Id,
+                ActionSetId,
                 actions,
                 new string[] { },
                 UNNotificationCategoryOptions.CustomDismissAction);
@@ -67,7 +67,7 @@ namespace Plugin.LocalNotifications
             LocalNotifications.Register();
         }
 
-        public string Id { get; }
+        public string ActionSetId { get; }
 
         public List<LocalNotificationActionRegistration> RegisteredActions { get; } = new List<LocalNotificationActionRegistration>();
     }

@@ -61,26 +61,29 @@ namespace Plugin.LocalNotifications
 
         public static void ProcessIntent(Intent intent)
         {
+            var notificationId = intent.GetIntExtra(LocalNotification.NotificationId, -1);
+
+            // Don't process this intent if iot doesn't have a notification id attached
+            if (notificationId == -1)
+            {
+                return;
+            }
+
             var actionSetId = intent.GetStringExtra(LocalNotification.ActionSetId);
             var actionId = intent.GetStringExtra(LocalNotification.ActionId);
-            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.UniqueIdentifier == actionId);
-
-            //CrossLocalNotifications.Current
-            //    .New(101)
-            //    .WithTitle("inside local notifications")
-            //    .WithBody($"A null?: {action == null}" +
-            //              $" ASId: {actionSetId}" +
-            //              $" AId: {actionId}")
-            //    .Show(DateTime.Now.AddSeconds(4));
+            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.ActionId == actionId);
 
             action?.Action(intent.GetStringExtra(LocalNotification.ActionParameter));
+
+            // Cancel notification after performing action
+            CrossLocalNotifications.Current.Cancel(notificationId);
         }
 
-        internal static IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars?.FirstOrDefault(a => a.Id == actionSetId)?.RegisteredActions;
+        internal static IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars?.FirstOrDefault(a => a.ActionSetId == actionSetId)?.RegisteredActions;
 
         private static ILocalNotificationActionRegistrar NewActionRegistrar(string id)
         {
-            if (_actionRegistrars.Any(a => a.Id == id))
+            if (_actionRegistrars.Any(a => a.ActionSetId == id))
             {
                 throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
             }
