@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Plugin.LocalNotifications.Abstractions;
+using Plugin.LocalNotifications.Models;
 
 namespace Plugin.LocalNotifications
 {
-    public class LocalNotificationActionRegistrar : ILocalNotificationActionRegistrar
+    public class ActionRegistrar : ILocalNotificationActionRegistrar
     {
-        public LocalNotificationActionRegistrar(string id)
+        public ActionRegistrar(string id)
         {
             Id = id;
         }
@@ -22,7 +23,7 @@ namespace Plugin.LocalNotifications
             RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
                 ActionSetId = Id,
-                Id = title,
+                Id = ActionIdentifiers.Action,
                 Title = title,
                 Action = action
             });
@@ -30,12 +31,17 @@ namespace Plugin.LocalNotifications
             return this;
         }
 
-        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action)
+        public ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Default, action);
+
+        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
+
+        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string id, Action<string> action)
         {
+            RegisteredActions.RemoveAll(a => a.Id == id);
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
-                Id = LocalNotificationActionRegistration.DismissActionIdentifier,
                 ActionSetId = Id,
+                Id = id,
                 Action = action
             });
 

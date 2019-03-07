@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+<<<<<<< Updated upstream
+=======
 using Android.Content;
 using Plugin.LocalNotifications.Abstractions;
+>>>>>>> Stashed changes
 
 namespace Plugin.LocalNotifications.Extensions
 {
-    internal static class Extensions
+    public static class Extensions
     {
         public static long AsEpochMilliseconds(this DateTime dateTime)
         {
@@ -36,6 +39,8 @@ namespace Plugin.LocalNotifications.Extensions
                 return (T)xmlSerializer.Deserialize(stringReader);
             }
         }
+<<<<<<< Updated upstream
+=======
 
         public static LocalNotificationAction ToAction(this LocalNotificationActionRegistration registration, string parameter)
         {
@@ -59,5 +64,6 @@ namespace Plugin.LocalNotifications.Extensions
                 Parameter = parameter
             };
         }
+>>>>>>> Stashed changes
     }
 }

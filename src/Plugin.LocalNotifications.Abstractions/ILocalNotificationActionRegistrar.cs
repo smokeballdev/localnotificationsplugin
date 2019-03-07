@@ -13,6 +13,13 @@ namespace Plugin.LocalNotifications.Abstractions
         ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action);
 
         /// <summary>
+        /// Registers the default action to be used when the user taps a notification
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<string> action);
+
+        /// <summary>
         /// Registers the default dismiss action to be used when the user swipes a notification
         /// </summary>
         /// <param name="action"></param>
@@ -32,7 +39,7 @@ namespace Plugin.LocalNotifications.Abstractions
 
     public class LocalNotificationActionRegistration
     {
-        public const string DismissActionIdentifier = "DismissActionIdentifier";
+        public virtual string UniqueIdentifier => Id;
 
         public string ActionSetId { get; set; }
         public string Id { get; set; }
@@ -42,6 +49,8 @@ namespace Plugin.LocalNotifications.Abstractions
 
     public class ButtonLocalNotificationActionRegistration : LocalNotificationActionRegistration
     {
+        public override string UniqueIdentifier => ActionSetId + Title;
+
         public string Title { get; set; }
     }
 }

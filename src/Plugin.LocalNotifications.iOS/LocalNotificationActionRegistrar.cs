@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Foundation;
 using Plugin.LocalNotifications.Abstractions;
+using Plugin.LocalNotifications.Models;
 using UserNotifications;
 
 namespace Plugin.LocalNotifications
@@ -23,8 +24,8 @@ namespace Plugin.LocalNotifications
 
             RegisteredActions.Add(new ButtonLocalNotificationActionRegistration
             {
-                Id = title,
                 ActionSetId = Id,
+                Id = title,
                 Title = title,
                 Action = action,
             });
@@ -32,12 +33,17 @@ namespace Plugin.LocalNotifications
             return this;
         }
 
-        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action)
+        public ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Default, action);
+
+        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
+
+        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string id, Action<string> action)
         {
+            RegisteredActions.RemoveAll(a => a.Id == id);
             RegisteredActions.Add(new LocalNotificationActionRegistration
             {
-                Id = LocalNotificationActionRegistration.DismissActionIdentifier,
                 ActionSetId = Id,
+                Id = id,
                 Action = action
             });
 
@@ -48,7 +54,7 @@ namespace Plugin.LocalNotifications
         {
             var actions = RegisteredActions
                 .OfType<ButtonLocalNotificationActionRegistration>()
-                .Select(action => UNNotificationAction.FromIdentifier(action.Id, action.Title, UNNotificationActionOptions.Foreground))
+                .Select(action => UNNotificationAction.FromIdentifier(action.UniqueIdentifier, action.Title, UNNotificationActionOptions.Foreground))
                 .ToArray();
 
             var category = UNNotificationCategory.FromIdentifier(

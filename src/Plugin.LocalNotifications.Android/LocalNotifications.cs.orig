@@ -15,7 +15,33 @@ namespace Plugin.LocalNotifications
     {
         private static readonly List<ActionRegistrar> _actionRegistrars = new List<ActionRegistrar>();
 
-  
+        public static void Initialize(Type notificationActivityType, int notificationIconId)
+        {
+            NotificationActivityType = notificationActivityType;
+            NotificationIconId = notificationIconId;
+<<<<<<< Updated upstream
+            Application.Context.RegisterReceiver(_actionReceiver, new IntentFilter(LocalNotificationActionReceiver.LocalNotificationIntentAction));
+=======
+        }
+
+        public static void ProcessIntent(Intent intent)
+        {
+            var actionSetId = intent.GetStringExtra(LocalNotification.ActionSetId);
+            var actionId = intent.GetStringExtra(LocalNotification.ActionId);
+            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.UniqueIdentifier == actionId);
+
+            //CrossLocalNotifications.Current
+            //    .New(101)
+            //    .WithTitle("inside local notifications")
+            //    .WithBody($"A null?: {action == null}" +
+            //              $" ASId: {actionSetId}" +
+            //              $" AId: {actionId}")
+            //    .Show(DateTime.Now.AddSeconds(4));
+
+            action?.Action(intent.GetStringExtra(LocalNotification.ActionParameter));
+>>>>>>> Stashed changes
+        }
+
         /// <summary>
         /// Register actions for notifications
         /// </summary>
@@ -51,29 +77,6 @@ namespace Plugin.LocalNotifications
 
             var notificationManager = NotificationManagerCompat.From(Application.Context);
             notificationManager.Cancel(id);
-        }
-
-        public static void Initialize(Type notificationActivityType, int notificationIconId)
-        {
-            NotificationActivityType = notificationActivityType;
-            NotificationIconId = notificationIconId;
-        }
-
-        public static void ProcessIntent(Intent intent)
-        {
-            var actionSetId = intent.GetStringExtra(LocalNotification.ActionSetId);
-            var actionId = intent.GetStringExtra(LocalNotification.ActionId);
-            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.UniqueIdentifier == actionId);
-
-            //CrossLocalNotifications.Current
-            //    .New(101)
-            //    .WithTitle("inside local notifications")
-            //    .WithBody($"A null?: {action == null}" +
-            //              $" ASId: {actionSetId}" +
-            //              $" AId: {actionId}")
-            //    .Show(DateTime.Now.AddSeconds(4));
-
-            action?.Action(intent.GetStringExtra(LocalNotification.ActionParameter));
         }
 
         internal static IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars?.FirstOrDefault(a => a.Id == actionSetId)?.RegisteredActions;

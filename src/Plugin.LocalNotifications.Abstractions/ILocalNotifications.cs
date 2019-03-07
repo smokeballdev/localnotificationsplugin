@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plugin.LocalNotifications.Abstractions
+﻿namespace Plugin.LocalNotifications.Abstractions
 {
     /// <summary>
     /// Local Notification Interface

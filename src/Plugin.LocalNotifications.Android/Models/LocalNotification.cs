@@ -3,8 +3,12 @@ using System.Collections.Generic;
 
 namespace Plugin.LocalNotifications
 {
-    internal class LocalNotification
+    public class LocalNotification
     {
+        public const string ActionSetId = "LocalNotification.ActionSetId";
+        public const string ActionId = "LocalNotification.ActionId";
+        public const string ActionParameter = "LocalNotification.ActionParameter";
+
         public string Title { get; set; }
         public string Body { get; set; }
         public int Id { get; set; }
@@ -13,7 +17,7 @@ namespace Plugin.LocalNotifications
         public List<LocalNotificationAction> Actions { get; set; }
     }
 
-    internal class LocalNotificationAction
+    public class LocalNotificationAction
     {
         public string Id { get; set; }
         public string ActionSetId { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Plugin.LocalNotifications.Abstractions;
+using Plugin.LocalNotifications.Models;
 using UserNotifications;
 
 namespace Plugin.LocalNotifications
@@ -34,12 +35,20 @@ namespace Plugin.LocalNotifications
             var actionSetId = response.Notification.Request.Content.CategoryIdentifier;
             var actionSet = _actionRegistrars.FirstOrDefault(r => r.Id == actionSetId);
 
-            // Perform default dismiss action if available, otherwise perform selected action
-            var actionIdentifier = response.IsDismissAction || response.IsDefaultAction ?
-                LocalNotificationActionRegistration.DismissActionIdentifier :
-                response.ActionIdentifier;
+            // Create a unique identifier for actions
+            string actionIdentifier = actionSetId + response.ActionIdentifier;
 
-            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Id == actionIdentifier);
+            if (response.IsDismissAction)
+            {
+                actionIdentifier = ActionIdentifiers.Dismiss;
+            }
+
+            if (response.IsDefaultAction)
+            {
+                actionIdentifier = ActionIdentifiers.Default;
+            }
+
+            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.UniqueIdentifier == actionIdentifier);
 
             if (action != null)
             {

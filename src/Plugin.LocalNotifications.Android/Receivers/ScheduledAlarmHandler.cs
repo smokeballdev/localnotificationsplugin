@@ -1,13 +1,11 @@
 using Android.Content;
+using Android.Support.V4.Content;
 using Plugin.LocalNotifications.Extensions;
 
 namespace Plugin.LocalNotifications
 {
-    /// <summary>
-    /// Broadcast receiver
-    /// </summary>
     [BroadcastReceiver(Enabled = true, Label = "Local Notifications Plugin Broadcast Receiver")]
-    public class ScheduledAlarmHandler : BroadcastReceiver
+    public class ScheduledAlarmHandler : WakefulBroadcastReceiver
     {
         public const string LocalNotificationKey = "LocalNotification";
 
@@ -16,7 +14,7 @@ namespace Plugin.LocalNotifications
             var extra = intent.GetStringExtra(LocalNotificationKey);
             var notification = extra.Deserialize<LocalNotification>();
 
-            LocalNotificationBuilder.Notify(notification);
+            NotificationBuilder.Notify(notification);
         }
     }
 }
