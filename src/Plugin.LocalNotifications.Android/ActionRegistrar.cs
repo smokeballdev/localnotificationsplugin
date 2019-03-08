@@ -13,7 +13,7 @@ namespace Plugin.LocalNotifications
             ActionSetId = id;
         }
 
-        public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action)
+        public ILocalNotificationActionRegistrar WithActionHandler(string title, Action<LocalNotificationArgs> action)
         {
             if (RegisteredActions.OfType<ButtonLocalNotificationActionRegistration>().Any(a => a.Title == title))
             {
@@ -31,11 +31,11 @@ namespace Plugin.LocalNotifications
             return this;
         }
 
-        public ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Default, action);
+        public ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<LocalNotificationArgs> action) => WithUniqueActionHandler(ActionIdentifiers.Default, action);
 
-        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
+        public ILocalNotificationActionRegistrar WithDismissActionHandler(Action<LocalNotificationArgs> action) => WithUniqueActionHandler(ActionIdentifiers.Dismiss, action);
 
-        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string actionId, Action<string> action)
+        private ILocalNotificationActionRegistrar WithUniqueActionHandler(string actionId, Action<LocalNotificationArgs> action)
         {
             RegisteredActions.RemoveAll(a => a.ActionId == actionId);
             RegisteredActions.Add(new LocalNotificationActionRegistration

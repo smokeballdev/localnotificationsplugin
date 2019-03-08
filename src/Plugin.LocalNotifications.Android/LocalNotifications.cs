@@ -15,7 +15,6 @@ namespace Plugin.LocalNotifications
     {
         private static readonly List<ActionRegistrar> _actionRegistrars = new List<ActionRegistrar>();
 
-  
         /// <summary>
         /// Register actions for notifications
         /// </summary>
@@ -73,7 +72,11 @@ namespace Plugin.LocalNotifications
             var actionId = intent.GetStringExtra(LocalNotification.ActionId);
             var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.ActionId == actionId);
 
-            action?.Action(intent.GetStringExtra(LocalNotification.ActionParameter));
+            action?.Action(new LocalNotificationArgs
+            {
+                Parameter = intent.GetStringExtra(LocalNotification.ActionParameter),
+                TimestampUtc = DateTime.UtcNow,
+            });
 
             // Cancel notification after performing action
             CrossLocalNotifications.Current.Cancel(notificationId);

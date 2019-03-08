@@ -26,9 +26,10 @@ namespace Plugin.LocalNotifications.Abstractions
         ILocalNotificationBuilder WithBody(string body);
 
         /// <summary>
-        /// Build a notification with the specified action
+        /// Build a notification with the specified action set, the action set must be registered
         /// </summary>
-        /// <param name="body"></param>
+        /// <param name="id"></param>
+        /// <param name="parameter"></param>
         /// <returns></returns>
         ILocalNotificationBuilder WithActionSet(string id, string parameter);
 

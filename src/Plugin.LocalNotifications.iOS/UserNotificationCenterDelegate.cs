@@ -20,7 +20,7 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationActionRegistrar NewActionRegistrar(string id)
         {
-            if (_actionRegistrars.Any(a => a.Id == id))
+            if (_actionRegistrars.Any(a => a.ActionSetId == id))
             {
                 throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
             }
@@ -33,10 +33,9 @@ namespace Plugin.LocalNotifications
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
             var actionSetId = response.Notification.Request.Content.CategoryIdentifier;
-            var actionSet = _actionRegistrars.FirstOrDefault(r => r.Id == actionSetId);
+            var actionSet = _actionRegistrars.FirstOrDefault(r => r.ActionSetId == actionSetId);
 
-            // Create a unique identifier for actions
-            string actionIdentifier = actionSetId + response.ActionIdentifier;
+            string actionIdentifier = response.ActionIdentifier;
 
             if (response.IsDismissAction)
             {
@@ -48,13 +47,13 @@ namespace Plugin.LocalNotifications
                 actionIdentifier = ActionIdentifiers.Default;
             }
 
-            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.UniqueIdentifier == actionIdentifier);
+            var action = actionSet?.RegisteredActions.FirstOrDefault(s => s.Id == actionIdentifier);
 
-            if (action != null)
+            action?.Action(new LocalNotificationArgs
             {
-                var parameter = response.Notification.Request.Content.UserInfo[LocalNotificationActionParameterKey]?.ToString();
-                action.Action(parameter);
-            }
+                Parameter = response.Notification.Request.Content.UserInfo[LocalNotificationActionParameterKey]?.ToString(),
+                TimestampUtc = DateTime.UtcNow
+            });
 
             completionHandler();
         }
