@@ -10,10 +10,14 @@ namespace Plugin.LocalNotifications
         public const string ActionId = "LocalNotification.ActionId";
         public const string ActionParameter = "LocalNotification.ActionParameter";
 
+        /// <summary>
+        /// Unique notification id
+        /// </summary>
+        public int Id { get; set; }
+
+        public int IconId { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
-        public int Id { get; set; }
-        public int IconId { get; set; }
         public DateTime NotifyTime { get; set; }
         public List<LocalNotificationAction> Actions { get; set; }
     }

@@ -64,7 +64,7 @@ namespace Plugin.LocalNotifications
                 UNNotificationCategoryOptions.CustomDismissAction);
 
             UNUserNotificationCenter.Current.SetNotificationCategories(new NSSet<UNNotificationCategory>(category));
-            LocalNotifications.Register();
+            LocalNotifications.Initialize();
         }
 
         public string ActionSetId { get; }
