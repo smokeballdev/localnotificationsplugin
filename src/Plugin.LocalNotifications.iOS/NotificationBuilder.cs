@@ -6,7 +6,7 @@ using UserNotifications;
 
 namespace Plugin.LocalNotifications
 {
-    public class LocalNotificationBuilder : ILocalNotificationBuilder
+    public class NotificationBuilder : ILocalNotificationBuilder
     {
         private readonly int _id;
         private string _title;
@@ -14,7 +14,7 @@ namespace Plugin.LocalNotifications
         private string _actionSetId;
         private string _actionSetParameter;
 
-        public LocalNotificationBuilder(int id)
+        public NotificationBuilder(int id)
         {
             _id = id;
         }
@@ -55,10 +55,18 @@ namespace Plugin.LocalNotifications
                 var notification = new UILocalNotification
                 {
                     FireDate = (NSDate)notifyAt,
-                    AlertTitle = _title,
-                    AlertBody = _body,
                     UserInfo = GetUserInfo()
                 };
+
+                if (_title != null)
+                {
+                    notification.AlertTitle = _title;
+                }
+
+                if (_body != null)
+                {
+                    notification.AlertBody = _body;
+                }
 
                 if (_actionSetId != null)
                 {
@@ -83,11 +91,23 @@ namespace Plugin.LocalNotifications
 
             var content = new UNMutableNotificationContent
             {
-                CategoryIdentifier = _actionSetId,
-                Title = _title,
-                Body = _body,
                 UserInfo = GetUserInfo()
             };
+
+            if (_title != null)
+            {
+                content.Title = _title;
+            }
+
+            if (_body != null)
+            {
+                content.Body = _body;
+            }
+
+            if (_actionSetId != null)
+            {
+                content.CategoryIdentifier = _actionSetId;
+            }
 
             var request = UNNotificationRequest.FromIdentifier(_id.ToString(), content, trigger);
 

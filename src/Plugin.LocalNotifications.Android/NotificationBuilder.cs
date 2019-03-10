@@ -6,23 +6,23 @@ using Android.Content;
 using Android.OS;
 using Plugin.LocalNotifications.Abstractions;
 using Plugin.LocalNotifications.Extensions;
+using Plugin.LocalNotifications.Models;
+using Plugin.LocalNotifications.Receivers;
 
 namespace Plugin.LocalNotifications
 {
-    internal class LocalNotificationBuilder : ILocalNotificationBuilder
+    internal class NotificationBuilder : ILocalNotificationBuilder
     {
         private static NotificationManager _manager => (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
 
         private readonly int _id;
         private readonly List<LocalNotificationAction> _actions = new List<LocalNotificationAction>();
-        private readonly LocalNotificationActionReceiver _actionReceiver;
         private int _iconId;
         private string _title;
         private string _body;
 
-        public LocalNotificationBuilder(LocalNotificationActionReceiver actionReceiver, int id)
+        public NotificationBuilder(int id)
         {
-            _actionReceiver = actionReceiver;
             _id = id;
         }
 
@@ -46,22 +46,21 @@ namespace Plugin.LocalNotifications
 
         public ILocalNotificationBuilder WithActionSet(string actionSetId, string parameter)
         {
-            var registeredActions = _actionReceiver.GetRegisteredActions(actionSetId).ToArray();
+            var registeredActions = LocalNotifications.GetRegisteredActions(actionSetId).ToArray();
 
             if (!registeredActions.Any())
             {
-                throw new InvalidOperationException($"Unable to associate action set id {actionSetId} with notification because it has not been registered.");
+                throw new InvalidOperationException($"Unable to associate notificationAction set id {actionSetId} with notification because it has not been registered.");
             }
 
-            _actions.AddRange(registeredActions.OfType<ButtonLocalNotificationActionRegistration>().Select(r => r.ToAction(parameter)));
-            _actions.Add(registeredActions.FirstOrDefault(a => a.Id == LocalNotificationActionRegistration.DismissActionIdentifier).ToAction(parameter));
+            _actions.AddRange(registeredActions.Select(r => r.ToAction(parameter)));
 
             return this;
         }
 
         public void Show(DateTime notifyTime)
         {
-            var localNotification = GetLocalNotification();
+            var localNotification = BuildLocalNotification();
             localNotification.NotifyTime = notifyTime;
 
             if (_iconId != 0)
@@ -91,9 +90,9 @@ namespace Plugin.LocalNotifications
 
         public void Show()
         {
-            Notify(GetLocalNotification());
+            Notify(BuildLocalNotification());
         }
-        
+
         public static void Notify(LocalNotification notification)
         {
             var builder = new Notification.Builder(Application.Context);
@@ -101,23 +100,6 @@ namespace Plugin.LocalNotifications
             builder.SetContentText(notification.Body);
             builder.SetAutoCancel(true);
             builder.SetPriority((int)NotificationPriority.Max);
-
-            // User actions
-            var actions = notification.Actions.Where(a => a.Id != LocalNotificationActionRegistration.DismissActionIdentifier).ToArray();
-            if (actions.Any())
-            {
-                builder.SetActions(GetNotificationActions(actions).ToArray());
-            }
-
-            // Default dismissal action
-            var dismissAction = notification.Actions.FirstOrDefault(a => a.Id == LocalNotificationActionRegistration.DismissActionIdentifier);
-            if (dismissAction != null)
-            {
-                var dismissActionIntent = CreateActionReceiverIntent(dismissAction, LocalNotificationActionReceiver.LocalNotificationIntentDismiss);
-                var dismissActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, GetRandomId(), dismissActionIntent, PendingIntentFlags.CancelCurrent);
-
-                builder.SetDeleteIntent(dismissActionPendingIntent);
-            }
 
             if (notification.IconId != 0)
             {
@@ -128,11 +110,27 @@ namespace Plugin.LocalNotifications
                 builder.SetSmallIcon(Resource.Drawable.plugin_lc_smallicon);
             }
 
-            var packageName = Application.Context.PackageName;
+            // Tapping on the notification
+            var defaultAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Default);
+            builder.SetContentIntent(CreateActivityPendingIntent(notification.Id, defaultAction, ActionIdentifiers.Default));
+
+            // Dismissing a notification (swiping the notification)
+            var dismissAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Dismiss);
+            if (dismissAction != null)
+            {
+                builder.SetDeleteIntent(CreateActivityPendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, typeof(DismissActionReceiver)));
+            }
+
+            // User actions
+            var actions = notification.Actions.Where(a => a.ActionId == ActionIdentifiers.Action).ToArray();
+            if (actions.Any())
+            {
+                builder.SetActions(GetNotificationActions(notification.Id, actions).ToArray());
+            }
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var channelId = $"{packageName}.general";
+                var channelId = $"{Application.Context.PackageName}.general";
                 var channel = new NotificationChannel(channelId, "General", NotificationImportance.Max);
 
                 _manager.CreateNotificationChannel(channel);
@@ -140,42 +138,57 @@ namespace Plugin.LocalNotifications
                 builder.SetChannelId(channelId);
             }
 
-            var resultIntent = Application.Context.PackageManager.GetLaunchIntentForPackage(packageName);
-            resultIntent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-
-            var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(Application.Context);
-            stackBuilder.AddNextIntent(resultIntent);
-
-            var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)PendingIntentFlags.UpdateCurrent);
-            builder.SetContentIntent(resultPendingIntent);
-
             _manager.Notify(notification.Id, builder.Build());
         }
 
-        private static IEnumerable<Notification.Action> GetNotificationActions(IEnumerable<LocalNotificationAction> actions)
+        private static IEnumerable<Notification.Action> GetNotificationActions(int notificationId, IEnumerable<LocalNotificationAction> actions)
         {
             foreach (var action in actions)
             {
-                var actionIntent = CreateActionReceiverIntent(action, LocalNotificationActionReceiver.LocalNotificationIntentAction);
-                var actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, GetRandomId(), actionIntent, PendingIntentFlags.CancelCurrent);
-
+                var pendingIntent = CreateActivityPendingIntent(notificationId, action, ActionIdentifiers.Action);
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
-                yield return new Notification.Action(iconId, action.Title, actionPendingIntent);
+                yield return new Notification.Action(iconId, action.Title, pendingIntent);
             }
         }
 
-        private static Intent CreateActionReceiverIntent(LocalNotificationAction action, string actionType)
+        private static PendingIntent CreateActivityPendingIntent(int notificationId, LocalNotificationAction action, string actionType, Type classType = null)
         {
-            var actionIntent = new Intent();
-            actionIntent.SetAction(actionType);
-            actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionSetId, action.ActionSetId);
-            actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionId, action.Id);
-            actionIntent.PutExtra(LocalNotificationActionReceiver.LocalNotificationActionParameter, action.Parameter);
-            return actionIntent;
+            var intent = CreateIntent(notificationId, action, actionType, classType);
+            return PendingIntent.GetActivity(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
-        private LocalNotification GetLocalNotification() =>
+        private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, string action, Type classType = null)
+        {
+            Intent intent = null;
+
+            if (classType == null)
+            {
+                // Set activity as receiver
+                intent = typeof(Activity).IsAssignableFrom(LocalNotifications.NotificationActivityType)
+                    ? new Intent(Application.Context, LocalNotifications.NotificationActivityType)
+                    : Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
+            }
+            else
+            {
+                // Set custom receiver
+                intent = new Intent(Application.Context, classType);
+            }
+
+            intent.SetAction(action);
+
+            if (notificationAction != null)
+            {
+                intent.PutExtra(LocalNotification.NotificationId, notificationId);
+                intent.PutExtra(LocalNotification.ActionSetId, notificationAction.ActionSetId);
+                intent.PutExtra(LocalNotification.ActionId, notificationAction.ActionId);
+                intent.PutExtra(LocalNotification.ActionParameter, notificationAction.Parameter);
+            }
+
+            return intent;
+        }
+
+        private LocalNotification BuildLocalNotification() =>
             new LocalNotification
             {
                 Id = _id,

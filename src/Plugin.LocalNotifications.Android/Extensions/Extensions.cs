@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Android.Content;
 using Plugin.LocalNotifications.Abstractions;
 
 namespace Plugin.LocalNotifications.Extensions
 {
-    public static class Extensions
+    internal static class Extensions
     {
         public static long AsEpochMilliseconds(this DateTime dateTime)
         {
@@ -35,24 +37,26 @@ namespace Plugin.LocalNotifications.Extensions
             }
         }
 
-        public static LocalNotificationAction ToAction(this ButtonLocalNotificationActionRegistration registration, string parameter)
-        {
-            return new LocalNotificationAction
-            {
-                ActionSetId = registration.ActionSetId,
-                Id = registration.Id,
-                Title = registration.Title,
-                IconId = registration.IconId,
-                Parameter = parameter
-            };
-        }
-
         public static LocalNotificationAction ToAction(this LocalNotificationActionRegistration registration, string parameter)
         {
+            if (registration is ButtonLocalNotificationActionRegistration buttonRegistration)
+            {
+                return new LocalNotificationAction
+                {
+                    Id = registration.Id,
+                    ActionSetId = registration.ActionSetId,
+                    ActionId = registration.ActionId,
+                    IconId = registration.IconId,
+                    Parameter = parameter,
+                    Title = buttonRegistration.Title,
+                };
+            }
+
             return new LocalNotificationAction
             {
-                ActionSetId = registration.ActionSetId,
                 Id = registration.Id,
+                ActionSetId = registration.ActionSetId,
+                ActionId = registration.ActionId,
                 IconId = registration.IconId,
                 Parameter = parameter
             };

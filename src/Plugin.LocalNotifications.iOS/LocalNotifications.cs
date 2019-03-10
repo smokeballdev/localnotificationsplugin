@@ -15,11 +15,11 @@ namespace Plugin.LocalNotifications
 
         private static readonly UserNotificationCenterDelegate UserNotificationCenterDelegate = new UserNotificationCenterDelegate();
 
-        public static void Register() => UNUserNotificationCenter.Current.Delegate = UserNotificationCenterDelegate;
+        public static void Initialize() => UNUserNotificationCenter.Current.Delegate = UserNotificationCenterDelegate;
 
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => UserNotificationCenterDelegate.NewActionRegistrar(id);
 
-        public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(id);
+        public ILocalNotificationBuilder New(int id) => new NotificationBuilder(id);
 
         /// <summary>
         /// Cancel a local notification

@@ -3,6 +3,8 @@ using Android.Content;
 using Android.Support.V4.App;
 using Plugin.LocalNotifications.Abstractions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Plugin.LocalNotifications
 {
@@ -11,23 +13,23 @@ namespace Plugin.LocalNotifications
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
-        private static readonly LocalNotificationActionReceiver _actionReceiver = new LocalNotificationActionReceiver();
+        private static readonly List<ActionRegistrar> _actionRegistrars = new List<ActionRegistrar>();
 
-        public static void Register(int notificationIconId)
-        {
-            NotificationIconId = notificationIconId;
+        /// <summary>
+        /// Register actions for notifications
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => NewActionRegistrar(id);
 
-            var intentFilter = new IntentFilter();
-            intentFilter.AddAction(LocalNotificationActionReceiver.LocalNotificationIntentAction);
-            intentFilter.AddAction(LocalNotificationActionReceiver.LocalNotificationIntentDismiss);
+        /// <summary>
+        /// Build and schedule a local notification
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ILocalNotificationBuilder New(int id) => new NotificationBuilder(id);
 
-            Application.Context.RegisterReceiver(_actionReceiver, intentFilter);
-        }
-
-        public ILocalNotificationActionRegistrar RegisterActionSet(string id) => _actionReceiver.NewActionRegistrar(id);
-
-        public ILocalNotificationBuilder New(int id) => new LocalNotificationBuilder(_actionReceiver, id);
-
+        /// <inheritdoc />
         /// <summary>
         /// Cancel a local notification
         /// </summary>
@@ -50,6 +52,51 @@ namespace Plugin.LocalNotifications
             notificationManager.Cancel(id);
         }
 
+        public static void Initialize(Type notificationActivityType, int notificationIconId)
+        {
+            NotificationActivityType = notificationActivityType;
+            NotificationIconId = notificationIconId;
+        }
+
+        public static void ProcessIntent(Intent intent)
+        {
+            var notificationId = intent.GetIntExtra(LocalNotification.NotificationId, -1);
+
+            // Don't process this intent if iot doesn't have a notification id attached
+            if (notificationId == -1)
+            {
+                return;
+            }
+
+            var actionSetId = intent.GetStringExtra(LocalNotification.ActionSetId);
+            var actionId = intent.GetStringExtra(LocalNotification.ActionId);
+            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.ActionId == actionId);
+
+            action?.Action(new LocalNotificationArgs
+            {
+                Parameter = intent.GetStringExtra(LocalNotification.ActionParameter),
+                TimestampUtc = DateTime.UtcNow,
+            });
+
+            // Cancel notification after performing action
+            CrossLocalNotifications.Current.Cancel(notificationId);
+        }
+
+        internal static IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars?.FirstOrDefault(a => a.ActionSetId == actionSetId)?.RegisteredActions;
+
+        private static ILocalNotificationActionRegistrar NewActionRegistrar(string id)
+        {
+            if (_actionRegistrars.Any(a => a.ActionSetId == id))
+            {
+                throw new InvalidOperationException($"Could not register action set '{id}' because an action set with the same id already exists.");
+            }
+
+            var registrar = new ActionRegistrar(id);
+            _actionRegistrars.Add(registrar);
+            return registrar;
+        }
+
+        internal static Type NotificationActivityType { get; set; }
         internal static int NotificationIconId { get; set; }
     }
 }

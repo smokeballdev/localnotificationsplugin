@@ -10,14 +10,21 @@ namespace Plugin.LocalNotifications.Abstractions
         /// <param name="title">Unique display name for the action</param>
         /// <param name="action">Action to be performed when action is selected, parameter is specified when action is applied to a notification</param>
         /// <returns></returns>
-        ILocalNotificationActionRegistrar WithActionHandler(string title, Action<string> action);
+        ILocalNotificationActionRegistrar WithActionHandler(string title, Action<LocalNotificationArgs> action);
+
+        /// <summary>
+        /// Registers the default action to be used when the user taps a notification
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        ILocalNotificationActionRegistrar WithDefaultActionHandler(Action<LocalNotificationArgs> action);
 
         /// <summary>
         /// Registers the default dismiss action to be used when the user swipes a notification
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        ILocalNotificationActionRegistrar WithDismissActionHandler(Action<string> action);
+        ILocalNotificationActionRegistrar WithDismissActionHandler(Action<LocalNotificationArgs> action);
 
         /// <summary>
         /// Finish registration
@@ -27,21 +34,29 @@ namespace Plugin.LocalNotifications.Abstractions
         /// <summary>
         /// Id for grouping the registered actions
         /// </summary>
-        string Id { get; }
+        string ActionSetId { get; }
     }
 
     public class LocalNotificationActionRegistration
     {
-        public const string DismissActionIdentifier = "DismissActionIdentifier";
+        /// <summary>
+        /// Unique identifier for the action
+        /// </summary>
+        public virtual string Id => ActionId;
 
         public string ActionSetId { get; set; }
-        public string Id { get; set; }
+        public string ActionId { get; set; }
         public int IconId { get; set; }
-        public Action<string> Action { get; set; }
+        public Action<LocalNotificationArgs> Action { get; set; }
     }
 
     public class ButtonLocalNotificationActionRegistration : LocalNotificationActionRegistration
     {
+        /// <summary>
+        /// Unique identifier for the action
+        /// </summary>
+        public override string Id => ActionSetId + Title;
+
         public string Title { get; set; }
     }
 }
