@@ -62,16 +62,8 @@ namespace Plugin.LocalNotifications
         {
             var localNotification = BuildLocalNotification();
             localNotification.NotifyTime = notifyTime;
-
-            if (_iconId != 0)
-            {
-                localNotification.IconId = _iconId;
-            }
-            else
-            {
-                localNotification.IconId = Resource.Drawable.plugin_lc_smallicon;
-            }
-
+            localNotification.IconId = GetIconId(_iconId);
+            
             var intent = new Intent(Application.Context, typeof(ScheduledAlarmHandler))
                 .SetAction("LocalNotifierIntent" + _id);
 
@@ -100,15 +92,7 @@ namespace Plugin.LocalNotifications
             builder.SetContentText(notification.Body);
             builder.SetAutoCancel(true);
             builder.SetPriority((int)NotificationPriority.Max);
-
-            if (notification.IconId != 0)
-            {
-                builder.SetSmallIcon(notification.IconId);
-            }
-            else
-            {
-                builder.SetSmallIcon(Resource.Drawable.plugin_lc_smallicon);
-            }
+            builder.SetSmallIcon(GetIconId(notification.IconId));
 
             // Tapping on the notification
             var defaultAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Default);
@@ -197,6 +181,21 @@ namespace Plugin.LocalNotifications
                 Body = _body,
                 Actions = _actions,
             };
+
+        private static int GetIconId(int iconId)
+        {
+            if (iconId != 0)
+            {
+                return iconId;
+            }
+
+            if (LocalNotifications.NotificationIconId != 0)
+            {
+                return LocalNotifications.NotificationIconId;
+            }
+
+            return Resource.Drawable.plugin_lc_smallicon;
+        }
 
         private static int GetRandomId() => Guid.NewGuid().GetHashCode();
     }
