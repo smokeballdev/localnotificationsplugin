@@ -52,9 +52,10 @@ namespace Plugin.LocalNotifications
             notificationManager.Cancel(id);
         }
 
-        public static void Initialize(Type notificationActivityType, int notificationIconId)
+        public static void Initialize(Type notificationActivityType, Type notificationServiceType, int notificationIconId)
         {
             NotificationActivityType = notificationActivityType;
+            NotificationServiceType = notificationServiceType;
             NotificationIconId = notificationIconId;
         }
 
@@ -69,8 +70,8 @@ namespace Plugin.LocalNotifications
             }
 
             var actionSetId = intent.GetStringExtra(LocalNotification.ActionSetId);
-            var actionId = intent.GetStringExtra(LocalNotification.ActionId);
-            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.ActionId == actionId);
+            var id = intent.GetStringExtra(LocalNotification.ActionId);
+            var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.Id == id);
 
             action?.Action(new LocalNotificationArgs
             {
@@ -97,6 +98,7 @@ namespace Plugin.LocalNotifications
         }
 
         internal static Type NotificationActivityType { get; set; }
+        internal static Type NotificationServiceType { get; set; }
         internal static int NotificationIconId { get; set; }
     }
 }

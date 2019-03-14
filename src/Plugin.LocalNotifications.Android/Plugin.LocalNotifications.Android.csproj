@@ -55,7 +55,6 @@
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="ActionRegistrar.cs" />
     <Compile Include="Models\LocalNotification.cs" />
-    <Compile Include="Receivers\DismissActionReceiver.cs" />
     <Compile Include="NotificationBuilder.cs" />
     <Compile Include="LocalNotifications.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

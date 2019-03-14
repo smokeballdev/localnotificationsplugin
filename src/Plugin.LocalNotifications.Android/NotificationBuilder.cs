@@ -7,7 +7,6 @@ using Android.OS;
 using Plugin.LocalNotifications.Abstractions;
 using Plugin.LocalNotifications.Extensions;
 using Plugin.LocalNotifications.Models;
-using Plugin.LocalNotifications.Receivers;
 
 namespace Plugin.LocalNotifications
 {
@@ -102,7 +101,7 @@ namespace Plugin.LocalNotifications
             var dismissAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Dismiss);
             if (dismissAction != null)
             {
-                builder.SetDeleteIntent(CreateActivityPendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, typeof(DismissActionReceiver)));
+                builder.SetDeleteIntent(CreatePendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, LocalNotifications.NotificationServiceType));
             }
 
             // User actions
@@ -129,7 +128,7 @@ namespace Plugin.LocalNotifications
         {
             foreach (var action in actions)
             {
-                var pendingIntent = CreateActivityPendingIntent(notificationId, action, ActionIdentifiers.Action);
+                var pendingIntent = CreatePendingIntent(notificationId, action, ActionIdentifiers.Action, LocalNotifications.NotificationServiceType);
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
                 yield return new Notification.Action(iconId, action.Title, pendingIntent);
@@ -140,6 +139,12 @@ namespace Plugin.LocalNotifications
         {
             var intent = CreateIntent(notificationId, action, actionType, classType);
             return PendingIntent.GetActivity(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
+        }
+
+        private static PendingIntent CreatePendingIntent(int notificationId, LocalNotificationAction action, string actionType, Type classType)
+        {
+            var intent = CreateIntent(notificationId, action, actionType, classType);
+            return PendingIntent.GetService(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
         private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, string action, Type classType = null)
@@ -165,7 +170,7 @@ namespace Plugin.LocalNotifications
             {
                 intent.PutExtra(LocalNotification.NotificationId, notificationId);
                 intent.PutExtra(LocalNotification.ActionSetId, notificationAction.ActionSetId);
-                intent.PutExtra(LocalNotification.ActionId, notificationAction.ActionId);
+                intent.PutExtra(LocalNotification.ActionId, notificationAction.Id);
                 intent.PutExtra(LocalNotification.ActionParameter, notificationAction.Parameter);
             }
 
