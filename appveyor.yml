@@ -51,7 +51,7 @@ deploy:
   - provider: NuGet
     server: http://packages.smokeball.com/nuget/smokeball/
     api_key:
-      secure: Gb5neQyAROVe6WHeeLpjwGG0VPyVX8Oy/3eUUQBLpQA=
+      secure: 4daht3RAVeO4D1y8kdMWmsaHx/kCMaBcrdNkmQeQWKk=
     on:
       branch: master
       is_pr: false
@@ -59,6 +59,6 @@ deploy:
   - provider: NuGet
     server: http://packages.smokeball.com/nuget/smokeball/
     api_key:
-      secure: Gb5neQyAROVe6WHeeLpjwGG0VPyVX8Oy/3eUUQBLpQA=
+      secure: 4daht3RAVeO4D1y8kdMWmsaHx/kCMaBcrdNkmQeQWKk=
     on:
       appveyor_repo_tag: true
