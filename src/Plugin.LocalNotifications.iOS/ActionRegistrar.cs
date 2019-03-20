@@ -54,7 +54,7 @@ namespace Plugin.LocalNotifications
         {
             var actions = RegisteredActions
                 .OfType<ButtonLocalNotificationActionRegistration>()
-                .Select(action => UNNotificationAction.FromIdentifier(action.Id, action.Title, UNNotificationActionOptions.Foreground))
+                .Select(action => UNNotificationAction.FromIdentifier(action.Id, action.Title, UNNotificationActionOptions.None))
                 .ToArray();
 
             var category = UNNotificationCategory.FromIdentifier(

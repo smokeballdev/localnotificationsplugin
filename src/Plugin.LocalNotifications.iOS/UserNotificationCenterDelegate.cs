@@ -60,7 +60,9 @@ namespace Plugin.LocalNotifications
 
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
-            completionHandler(UNNotificationPresentationOptions.Alert);
+            completionHandler(UNNotificationPresentationOptions.Alert |
+                              UNNotificationPresentationOptions.Sound |
+                              UNNotificationPresentationOptions.Badge);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Plugin.LocalNotifications
                 var notification = new UILocalNotification
                 {
                     FireDate = (NSDate)notifyAt,
-                    UserInfo = GetUserInfo()
+                    UserInfo = GetUserInfo(),
                 };
 
                 if (_title != null)
@@ -79,7 +79,7 @@ namespace Plugin.LocalNotifications
 
         public void Show()
         {
-            Show(DateTime.Now);
+            Show(DateTime.Now.AddSeconds(1));
         }
 
         private void ShowUserNotification(UNNotificationTrigger trigger)
@@ -91,7 +91,7 @@ namespace Plugin.LocalNotifications
 
             var content = new UNMutableNotificationContent
             {
-                UserInfo = GetUserInfo()
+                UserInfo = GetUserInfo(),
             };
 
             if (_title != null)
