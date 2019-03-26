@@ -55,7 +55,7 @@ namespace Plugin.LocalNotifications
         public static void Initialize(Type notificationActivityType, Type notificationServiceType, int notificationIconId)
         {
             NotificationActivityType = notificationActivityType;
-            NotificationServiceType = notificationServiceType;
+            NotificationBroadcastReceiverType = notificationServiceType;
             NotificationIconId = notificationIconId;
         }
 
@@ -98,7 +98,7 @@ namespace Plugin.LocalNotifications
         }
 
         internal static Type NotificationActivityType { get; set; }
-        internal static Type NotificationServiceType { get; set; }
+        internal static Type NotificationBroadcastReceiverType { get; set; }
         internal static int NotificationIconId { get; set; }
     }
 }

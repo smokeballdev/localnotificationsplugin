@@ -101,7 +101,7 @@ namespace Plugin.LocalNotifications
             var dismissAction = notification.Actions.FirstOrDefault(a => a.ActionId == ActionIdentifiers.Dismiss);
             if (dismissAction != null)
             {
-                builder.SetDeleteIntent(CreatePendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, LocalNotifications.NotificationServiceType));
+                builder.SetDeleteIntent(CreatePendingIntent(notification.Id, dismissAction, ActionIdentifiers.Dismiss, LocalNotifications.NotificationBroadcastReceiverType));
             }
 
             // User actions
@@ -128,7 +128,7 @@ namespace Plugin.LocalNotifications
         {
             foreach (var action in actions)
             {
-                var pendingIntent = CreatePendingIntent(notificationId, action, ActionIdentifiers.Action, LocalNotifications.NotificationServiceType);
+                var pendingIntent = CreatePendingIntent(notificationId, action, ActionIdentifiers.Action, LocalNotifications.NotificationBroadcastReceiverType);
                 var iconId = action.IconId == 0 ? Resource.Drawable.plugin_lc_smallicon : action.IconId;
 
                 yield return new Notification.Action(iconId, action.Title, pendingIntent);
@@ -144,7 +144,7 @@ namespace Plugin.LocalNotifications
         private static PendingIntent CreatePendingIntent(int notificationId, LocalNotificationAction action, string actionType, Type classType)
         {
             var intent = CreateIntent(notificationId, action, actionType, classType);
-            return PendingIntent.GetService(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
+            return PendingIntent.GetBroadcast(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
         private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, string action, Type classType = null)
