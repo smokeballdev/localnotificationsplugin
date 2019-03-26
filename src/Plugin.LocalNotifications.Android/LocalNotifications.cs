@@ -13,6 +13,8 @@ namespace Plugin.LocalNotifications
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
+        public const string NotificationAction = "plugin.localnotifications.NOTIFICATION_EVENT";
+
         private static readonly List<ActionRegistrar> _actionRegistrars = new List<ActionRegistrar>();
 
         /// <summary>
@@ -52,10 +54,9 @@ namespace Plugin.LocalNotifications
             notificationManager.Cancel(id);
         }
 
-        public static void Initialize(Type notificationActivityType, Type notificationServiceType, int notificationIconId)
+        public static void Initialize(Type notificationActivityType, int notificationIconId)
         {
             NotificationActivityType = notificationActivityType;
-            NotificationBroadcastReceiverType = notificationServiceType;
             NotificationIconId = notificationIconId;
         }
 
@@ -98,7 +99,6 @@ namespace Plugin.LocalNotifications
         }
 
         internal static Type NotificationActivityType { get; set; }
-        internal static Type NotificationBroadcastReceiverType { get; set; }
         internal static int NotificationIconId { get; set; }
     }
 }
