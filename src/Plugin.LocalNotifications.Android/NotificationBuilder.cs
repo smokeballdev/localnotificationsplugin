@@ -137,7 +137,7 @@ namespace Plugin.LocalNotifications
 
         private static PendingIntent CreateActivityPendingIntent(int notificationId, LocalNotificationAction action)
         {
-            var intent = CreateIntent(notificationId, action, LocalNotifications.NotificationActivityType);
+            var intent = CreateIntent(notificationId, action, launchActivity: true);
             return PendingIntent.GetActivity(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
@@ -147,15 +147,15 @@ namespace Plugin.LocalNotifications
             return PendingIntent.GetBroadcast(Application.Context, GetRandomId(), intent, PendingIntentFlags.UpdateCurrent);
         }
 
-        private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, Type activityType = null)
+        private static Intent CreateIntent(int notificationId, LocalNotificationAction notificationAction, bool launchActivity = false)
         {
             Intent intent = null;
 
-            if (activityType != null)
+            if (launchActivity)
             {
                 // Set activity as receiver
-                intent = typeof(Activity).IsAssignableFrom(activityType)
-                    ? new Intent(Application.Context, activityType)
+                intent = typeof(Activity).IsAssignableFrom(LocalNotifications.NotificationActivityType)
+                    ? new Intent(Application.Context, LocalNotifications.NotificationActivityType)
                     : Application.Context.PackageManager.GetLaunchIntentForPackage(Application.Context.PackageName);
             }
             else

@@ -64,7 +64,7 @@ namespace Plugin.LocalNotifications
         {
             var notificationId = intent.GetIntExtra(LocalNotification.NotificationId, -1);
 
-            // Don't process this intent if iot doesn't have a notification id attached
+            // Don't process this intent if it doesn't have a notification id attached
             if (notificationId == -1)
             {
                 return;
