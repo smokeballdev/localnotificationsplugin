@@ -74,14 +74,14 @@ namespace Plugin.LocalNotifications
             var id = intent.GetStringExtra(LocalNotification.ActionId);
             var action = GetRegisteredActions(actionSetId)?.FirstOrDefault(a => a.Id == id);
 
+            // Cancel notification before performing action to improve user experience
+            CrossLocalNotifications.Current.Cancel(notificationId);
+
             action?.Action(new LocalNotificationArgs
             {
                 Parameter = intent.GetStringExtra(LocalNotification.ActionParameter),
                 TimestampUtc = DateTime.UtcNow,
             });
-
-            // Cancel notification after performing action
-            CrossLocalNotifications.Current.Cancel(notificationId);
         }
 
         internal static IEnumerable<LocalNotificationActionRegistration> GetRegisteredActions(string actionSetId) => _actionRegistrars?.FirstOrDefault(a => a.ActionSetId == actionSetId)?.RegisteredActions;
