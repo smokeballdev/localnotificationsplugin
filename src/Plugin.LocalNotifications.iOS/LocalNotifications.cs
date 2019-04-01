@@ -17,10 +17,23 @@ namespace Plugin.LocalNotifications
 
         public static void Initialize() => UNUserNotificationCenter.Current.Delegate = UserNotificationCenterDelegate;
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Register actions for notifications
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => UserNotificationCenterDelegate.NewActionRegistrar(id);
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Build and schedule a local notification
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ILocalNotificationBuilder New(int id) => new NotificationBuilder(id);
 
+        /// <inheritdoc />
         /// <summary>
         /// Cancel a local notification
         /// </summary>

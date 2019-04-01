@@ -17,6 +17,7 @@ namespace Plugin.LocalNotifications
 
         private static readonly List<ActionRegistrar> _actionRegistrars = new List<ActionRegistrar>();
 
+        /// <inheritdoc />
         /// <summary>
         /// Register actions for notifications
         /// </summary>
@@ -24,6 +25,7 @@ namespace Plugin.LocalNotifications
         /// <returns></returns>
         public ILocalNotificationActionRegistrar RegisterActionSet(string id) => NewActionRegistrar(id);
 
+        /// <inheritdoc />
         /// <summary>
         /// Build and schedule a local notification
         /// </summary>
