@@ -160,13 +160,13 @@ namespace Plugin.LocalNotifications
             }
             else
             {
-                 intent = new Intent(LocalNotifications.NotificationAction);
+                intent = new Intent(LocalNotifications.NotificationAction);
 
-                // Find the broadcast receiver associated with the associated intent
+                // Find the broadcast receiver associated with the intent
                 var packageManager = Application.Context.PackageManager;
-                var matches = packageManager.QueryBroadcastReceivers(intent, 0);
+                var match = packageManager.QueryBroadcastReceivers(intent, 0).FirstOrDefault();
 
-                foreach (var match in matches)
+                if (match != null)
                 {
                     // Explicitly set the component to receive this intent
                     intent.SetComponent(new ComponentName(match.ActivityInfo.ApplicationInfo.PackageName, match.ActivityInfo.Name));
