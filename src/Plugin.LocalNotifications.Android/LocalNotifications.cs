@@ -9,7 +9,7 @@ using System.Linq;
 namespace Plugin.LocalNotifications
 {
     /// <summary>
-    /// Local Notifications implementation for Android
+    ///     Local Notifications implementation for Android
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
@@ -19,7 +19,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Register actions for notifications
+        ///     Register actions for notifications
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -27,7 +27,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Build and schedule a local notification
+        ///     Build and schedule a local notification
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -35,7 +35,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Cancel a local notification
+        ///     Cancel a local notification
         /// </summary>
         /// <param name="id">Id of the notification to cancel</param>
         public void Cancel(int id)
@@ -54,6 +54,14 @@ namespace Plugin.LocalNotifications
 
             var notificationManager = NotificationManagerCompat.From(Application.Context);
             notificationManager.Cancel(id);
+        }
+
+        public void CancelAll()
+        {
+            // Cancels all shown notifications
+            // DOES NOT cancel all pending notifications, does not seem possible without recreating the pending intent (see Cancel method)
+            var notificationManager = NotificationManagerCompat.From(Application.Context);
+            notificationManager.CancelAll();
         }
 
         public static void Initialize(Type notificationActivityType, int notificationIconId)

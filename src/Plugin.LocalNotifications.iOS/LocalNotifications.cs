@@ -7,7 +7,7 @@ using UserNotifications;
 namespace Plugin.LocalNotifications
 {
     /// <summary>
-    /// Local Notifications implementation for iOS
+    ///     Local Notifications implementation for iOS
     /// </summary>
     public class LocalNotifications : ILocalNotifications
     {
@@ -19,7 +19,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Register actions for notifications
+        ///     Register actions for notifications
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -27,7 +27,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Build and schedule a local notification
+        ///     Build and schedule a local notification
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -35,7 +35,7 @@ namespace Plugin.LocalNotifications
 
         /// <inheritdoc />
         /// <summary>
-        /// Cancel a local notification
+        ///     Cancel a local notification
         /// </summary>
         /// <param name="id">Id of the notification to cancel</param>
         public void Cancel(int id)
@@ -56,6 +56,11 @@ namespace Plugin.LocalNotifications
                     UIApplication.SharedApplication.CancelLocalNotification(notification);
                 }
             }
+        }
+
+        public void CancelAll()
+        {
+            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
         }
     }
 }
