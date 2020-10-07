@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidTlsProvider>
     </AndroidTlsProvider>
     <NuGetPackageImportStamp>
@@ -99,9 +99,10 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi-v11\plugin_lc_smallicon.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>28.0.0.3</Version>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat">
+      <Version>1.2.0.4</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Migration" Version="1.0.7.1" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

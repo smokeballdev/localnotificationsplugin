@@ -1,10 +1,10 @@
 using Android.App;
 using Android.Content;
-using Android.Support.V4.App;
 using Plugin.LocalNotifications.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AndroidX.Core.App;
 
 namespace Plugin.LocalNotifications
 {
