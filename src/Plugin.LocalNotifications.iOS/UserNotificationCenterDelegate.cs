@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Foundation;
 using Plugin.LocalNotifications.Abstractions;
 using Plugin.LocalNotifications.Models;
 using UserNotifications;
@@ -28,8 +29,9 @@ namespace Plugin.LocalNotifications
             var registrar = new ActionRegistrar(id);
             _actionRegistrars.Add(registrar);
             return registrar;
-        } 
+        }
 
+        [Export("userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:")]
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
             var actionSetId = response.Notification.Request.Content.CategoryIdentifier;
@@ -58,8 +60,11 @@ namespace Plugin.LocalNotifications
             completionHandler();
         }
 
+        [Export("userNotificationCenter:willPresentNotification:withCompletionHandler:")]
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
+            Console.WriteLine($"Will present notification: {notification}");
+
             completionHandler(UNNotificationPresentationOptions.Alert |
                               UNNotificationPresentationOptions.Sound |
                               UNNotificationPresentationOptions.Badge);

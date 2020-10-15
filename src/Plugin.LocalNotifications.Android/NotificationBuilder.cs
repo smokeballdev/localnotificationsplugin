@@ -59,6 +59,8 @@ namespace Plugin.LocalNotifications
 
         public void Show(DateTime notifyTime)
         {
+            Console.WriteLine($"Will show notification (id: {_id}) with title '{_title}' at {notifyTime}");
+
             var localNotification = BuildLocalNotification();
             localNotification.NotifyTime = notifyTime;
             localNotification.IconId = GetIconId(_iconId);
@@ -81,6 +83,8 @@ namespace Plugin.LocalNotifications
 
         public void Show()
         {
+            Console.WriteLine($"Will show notification (id: {_id}) with title '{_title}' immediately");
+
             Notify(BuildLocalNotification());
         }
 

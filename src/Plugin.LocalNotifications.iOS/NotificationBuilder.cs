@@ -45,6 +45,8 @@ namespace Plugin.LocalNotifications
 
         public void Show(DateTime notifyAt)
         {
+            Console.WriteLine($"Will show notification (id: {_id}) with title '{_title}' at {notifyAt}");
+
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
                 var trigger = UNCalendarNotificationTrigger.CreateTrigger(GetNSDateComponentsFromDateTime(notifyAt), false);
@@ -79,7 +81,7 @@ namespace Plugin.LocalNotifications
 
         public void Show()
         {
-            Show(DateTime.Now.AddSeconds(1));
+            Show(DateTime.Now.AddSeconds(2));
         }
 
         private void ShowUserNotification(UNNotificationTrigger trigger)
